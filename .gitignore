@@ -1,0 +1,15 @@
+# pixi environments
+.pixi/
+# Python
+__pycache__/
+*.py[cod]
+.ruff_cache/
+# marimo
+__marimo__/
+.marimo/
+# Quarto (note: _freeze/ is committed on purpose)
+/.quarto/
+/_site/
+# OS / editors
+.DS_Store
+Thumbs.db

@@ -1,0 +1,9 @@
+target-version = "py312"
+line-length = 88
+extend-exclude = ["_freeze", "_site"]
+
+[lint]
+extend-select = ["I"] # import sorting
+
+[format]
+docstring-code-format = true
