@@ -5,7 +5,9 @@ import subprocess
 from pathlib import Path
 
 HOOK = """#!/bin/sh
-# Installed by `pixi run install-hooks`
+# Installed by `pixi run install-hooks`.
+# Skip branches without the book, e.g. gh-pages (written by `quarto publish`).
+[ -f pixi.toml ] || exit 0
 exec pixi run -e dev check
 """
 
