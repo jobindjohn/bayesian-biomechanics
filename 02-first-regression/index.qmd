@@ -4,3 +4,10 @@
 Placeholder chapter. It exists to prove the local PyMC/Bambi lesson pipeline
 and will be replaced with real content.
 :::
+
+## The lesson
+
+This lesson fits a model with PyMC, which does not run in the browser. The
+page shows its pre-computed results; see @sec-setup to run it yourself.
+
+{{< lesson first_regression.py >}}

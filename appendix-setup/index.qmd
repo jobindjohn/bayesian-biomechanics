@@ -43,17 +43,12 @@ pixi run refit 02-first-regression/first_regression.py
 ## Option 2: a single notebook
 
 Every notebook lists the packages it needs at the top of the file, so you can
-run one on its own. Download it with the button on the lesson's page, then
-use either of:
+run one on its own. Download it with the button on the lesson's page, install
+[uv](https://docs.astral.sh/uv/getting-started/installation/), and run:
 
-- **uv** ([installation](https://docs.astral.sh/uv/getting-started/installation/)):
+```bash
+uvx marimo edit --sandbox first_regression.py
+```
 
-  ```bash
-  uvx marimo edit --sandbox first_regression.py
-  ```
-
-- **pixi**:
-
-  ```bash
-  pixi exec marimo edit first_regression.py
-  ```
+uv reads the package list from the notebook and installs it into a private
+environment for that notebook.

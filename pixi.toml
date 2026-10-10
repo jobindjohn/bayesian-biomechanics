@@ -26,6 +26,7 @@ scipy = ">=1.14"
 polars = ">=2.0"
 matplotlib = ">=3.9"
 plotnine = ">=0.14"
+h5netcdf = { version = ">=1.4", extras = ["h5py"] } # NetCDF results files
 
 [tasks]
 # Open a lesson notebook in marimo, e.g. `pixi run lesson 01-intro/grid_approximation.py`
@@ -39,6 +40,7 @@ lychee = "*" # link checker (not on PyPI)
 [feature.dev.pypi-dependencies]
 ruff = ">=0.17"
 typos = ">=1.51"
+uv = ">=0.11" # runs notebooks standalone from their PEP 723 headers
 
 [feature.dev.tasks]
 lint = "ruff check ."
@@ -48,9 +50,16 @@ marimo-check = "marimo check --strict --ignore-scripts ."
 spell = "typos"
 check = { depends-on = ["lint", "format-check", "marimo-check", "spell"] }
 install-hooks = "python scripts/install_hooks.py"
+# Run each notebook standalone from its own header (uv / pixi --script)
+check-notebooks = "python scripts/check_notebooks.py"
 
 [feature.docs.dependencies]
 quarto = ">=1.9.38,<1.10"
+
+[feature.docs.tasks]
+render = "quarto render"
+preview = "quarto preview"
+links = "lychee --no-progress --root-dir _site '_site/**/*.html'"
 
 [environments]
 default = { solve-group = "main" }

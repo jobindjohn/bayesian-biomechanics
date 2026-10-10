@@ -1,6 +1,7 @@
 project:
   type: book
   output-dir: _site
+  post-render: scripts/export_notebooks.py
 
 book:
   title: "Bayesian Biomechanics"

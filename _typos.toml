@@ -6,6 +6,17 @@ extend-exclude = ["pixi.lock", "LICENSE*", "_freeze/", "_site/", "_extensions/",
 [type.qmd]
 extend-glob = ["*.qmd"]
 locale = "en-gb"
+extend-ignore-re = [
+    "(?s)```.*?```", # fenced code blocks
+    "`[^`\n]+`", # inline code
+]
 
 [type.md]
 locale = "en-gb"
+extend-ignore-re = [
+    "(?s)```.*?```", # fenced code blocks
+    "`[^`\n]+`", # inline code
+]
+
+[default.extend-words]
+lik = "lik" # log_lik: likelihood
