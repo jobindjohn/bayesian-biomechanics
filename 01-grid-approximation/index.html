@@ -1,0 +1,2174 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en-GB" xml:lang="en-GB"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>1&nbsp; Grid approximation – Bayesian Biomechanics</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../02-first-regression/index.html" rel="next">
+<link href="../index.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-6a50bd621f08fdc5c26e43d254df0a90.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-9bfc61b20ce54e18ae6b25bf56d136e1.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-6a50bd621f08fdc5c26e43d254df0a90.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-147ba38827aabe65ba223d9e9d71cdb8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-3a12921481bc5e168c1eccef44e2c2c0.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-147ba38827aabe65ba223d9e9d71cdb8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style data-marimo-islands="">:where(.marimo-island-host){margin-block:var(--_marimo-island-margin-block);color:var(--_marimo-island-foreground);--_marimo-island-background: var(--marimo-island-background, #fff);--_marimo-island-foreground: var(--marimo-island-foreground, #0f172a);--_marimo-island-surface: var(--marimo-island-surface, #fff);--_marimo-island-muted-surface: var(--marimo-island-muted-surface, #f1f5f9);--_marimo-island-raised-surface: color-mix(in srgb, var(--_marimo-island-foreground) 3%, var(--_marimo-island-background));--_marimo-island-muted-foreground: var(--marimo-island-muted-foreground, #64748b);--_marimo-island-border: var(--marimo-island-border, #e2e8f0);--_marimo-island-link: var(--marimo-island-accent, #0b68cb);--_marimo-island-accent: var(--marimo-island-accent, #0880ea);--_marimo-island-accent-foreground: var(--marimo-island-accent-foreground, #f8fafc);--_marimo-island-focus-ring: var(--marimo-island-focus-ring, var(--_marimo-island-accent));--_marimo-island-code-background: var(--marimo-island-code-background, var(--_marimo-island-muted-surface));--_marimo-island-code-foreground: var(--marimo-island-code-foreground, var(--_marimo-island-foreground));--_marimo-island-code-border: var(--_marimo-island-border);--_marimo-island-hover-background: color-mix(in srgb, var(--_marimo-island-foreground) 8%, transparent);--_marimo-island-error-background: var(--marimo-island-error-background, color-mix(in srgb, #dc2626 6%, var(--_marimo-island-background)));--_marimo-island-error-border: var(--marimo-island-error-border, color-mix(in srgb, #dc2626 42%, var(--_marimo-island-border)));--_marimo-island-error-foreground: var(--marimo-island-error-foreground, var(--_marimo-island-foreground));--_marimo-island-error-accent: var(--marimo-island-error-accent, #dc2626);--_marimo-island-radius: var(--marimo-island-radius, .5rem);--_marimo-island-margin-block: var(--marimo-island-margin-block, 1rem)}:where(.marimo-island-host[data-marimo-theme=dark]){--_marimo-island-background: var(--marimo-island-background, #181c1a);--_marimo-island-foreground: var(--marimo-island-foreground, #eceeed);--_marimo-island-surface: var(--marimo-island-surface, #252927);--_marimo-island-muted-surface: var(--marimo-island-muted-surface, #020303);--_marimo-island-border: var(--marimo-island-border, #3b403e);--_marimo-island-muted-foreground: var(--marimo-island-muted-foreground, #aab2af);--_marimo-island-code-background: var(--marimo-island-code-background, #282c34);--_marimo-island-code-foreground: var(--marimo-island-code-foreground, #abb2bf);--_marimo-island-error-background: var(--marimo-island-error-background, color-mix(in srgb, #f87171 8%, var(--_marimo-island-background)));--_marimo-island-error-border: var(--marimo-island-error-border, color-mix(in srgb, #f87171 42%, var(--_marimo-island-border)));--_marimo-island-error-accent: var(--marimo-island-error-accent, #fca5a5);--_marimo-island-error-foreground: var(--marimo-island-error-foreground, var(--_marimo-island-foreground))}:where(.marimo-island-host){box-sizing:border-box;margin-block:var(--_marimo-island-margin-block);min-width:0;max-width:100%;display:block;overflow-x:auto}:where(.marimo-island-host)>:first-child{margin-top:0}:where(.marimo-island-host)>:last-child{margin-bottom:0}:where(.marimo-island-host) :where(marimo-island,marimo-cell-output){min-width:0;max-width:100%;overflow-x:auto}:where(.marimo-island-host)>marimo-island.marimo{display:contents}:where(.marimo-island-host) :where(pre){background:var(--_marimo-island-code-background)!important;border-color:var(--_marimo-island-code-border)!important;color:var(--_marimo-island-code-foreground)!important}:where(.marimo-island-host) :where(p,li) code,:where(.marimo-island-host) :where(p,li) code *{overflow-wrap:anywhere;word-break:break-word;white-space:normal!important}:where(.marimo-island-host[data-marimo-theme=dark]) :where(.admonition,[class*=admonition],.callout,.markdown.prose,.markdown.prose *,.codehilite,.codehilite *,.highlight,.highlight *,pre,pre *,code,code *,marimo-accordion,marimo-accordion *,table,thead,tbody,tr,th,td,.marimo-json-output,.marimo-json-output *,.json-viewer-theme-light,.json-viewer-theme-light *,label,input,output,[role=cell],[role=columnheader],[role=rowheader]){color:var(--_marimo-island-foreground)!important}:where(.marimo-island-host[data-marimo-theme=dark]) :where(.admonition,[class*=admonition],.callout){background:var(--_marimo-island-muted-surface)!important;border-color:var(--_marimo-island-border)!important}:where(.marimo-island-host[data-marimo-theme=dark]) :where(input,textarea,select){background:var(--_marimo-island-surface)!important;border-color:var(--_marimo-island-border)!important;color:var(--_marimo-island-foreground)!important}.marimo-island-error{border:1px solid var(--_marimo-island-error-border);border-radius:var(--_marimo-island-radius);color:var(--_marimo-island-error-foreground);padding:.75rem}.marimo-island-error summary{color:var(--_marimo-island-error-accent)}.marimo-island-error pre{white-space:pre-wrap;overflow-wrap:anywhere}
+</style>
+<script type="module" data-marimo-islands="">// Generated by `make browser-build` from src/browser and the mdx-marimo bridge.
+// Do not edit this file directly.
+// npm:@marimo-team/mdx-marimo@0.0.5/dist/island-BDwgwD5F.js
+var runtimeStateSymbol = Symbol.for("@marimo-team/islands-bridge/runtime-state");
+var safeSessionHandoffVersion = [
+  0,
+  23,
+  16
+];
+var appRevisions = /* @__PURE__ */ new WeakMap();
+function hasConfirmedSoftNavigationAssets(app) {
+  if (!matchesRuntime(app.assets)) return false;
+  const modules = [];
+  for (const src of app.assets.moduleScripts) {
+    const runtimeModule = runtimeDocumentState().resolvedModules.get(moduleHref(src));
+    if (!runtimeModule) return false;
+    modules.push(runtimeModule);
+  }
+  return supportsSoftNavigation(app, modules);
+}
+function acquireAssets(app, host) {
+  const reload = claimRuntime(app.assets);
+  if (reload) return {
+    activate: () => reload,
+    ready: reload,
+    release: () => {
+    }
+  };
+  ensureMountConfig(app.assets);
+  ensureHeadTags(app.assets.headTags ?? []);
+  ensureLinks(app.assets.links);
+  const documentState = runtimeDocumentState();
+  const state = documentState.appAssets.get(app.id) ?? {
+    leases: /* @__PURE__ */ new Set()
+  };
+  const lease = {
+    host,
+    revision: appRevision(app)
+  };
+  state.leases.add(lease);
+  documentState.appAssets.set(app.id, state);
+  let released = false;
+  const release = () => {
+    if (released) return;
+    released = true;
+    state.leases.delete(lease);
+    enqueueRuntimeActivation(async () => {
+      if (liveHosts(state).length > 0) return;
+      const activeApp = runtimeDocumentState().activeApp;
+      if (activeApp?.state === state) {
+        if (activeApp.replaceable) await deactivateApp(activeApp);
+        return;
+      }
+      cleanupAppState(app.id, state);
+    });
+  };
+  const activate = () => activateApp(app, state).then((modules) => supportsSoftNavigation(app, modules));
+  return {
+    activate,
+    ready: activate().catch((error) => {
+      release();
+      throw error;
+    }),
+    release
+  };
+}
+function runtimeDocumentState() {
+  const target = window;
+  return target[runtimeStateSymbol] ??= {
+    appAssets: /* @__PURE__ */ new Map(),
+    loadedModules: /* @__PURE__ */ new Map(),
+    resolvedModules: /* @__PURE__ */ new Map()
+  };
+}
+function runtimeKey(assets) {
+  return JSON.stringify([
+    assets.version ?? null,
+    assets.moduleScripts.map(moduleHref)
+  ]);
+}
+function matchesRuntime(assets) {
+  const state = runtimeDocumentState();
+  return !state.reload && state.key !== void 0 && state.key === runtimeKey(assets);
+}
+function claimRuntime(assets) {
+  const state = runtimeDocumentState();
+  if (state.reload) return state.reload;
+  const key = runtimeKey(assets);
+  if (state.key === void 0) {
+    state.key = key;
+    return;
+  }
+  if (state.key === key) return void 0;
+  return reloadDocument();
+}
+function reloadDocument() {
+  const state = runtimeDocumentState();
+  state.reload ??= new Promise(() => {
+  });
+  window.location.reload();
+  return state.reload;
+}
+function moduleHref(src) {
+  return new URL(src, document.baseURI).href;
+}
+async function activateApp(app, state) {
+  const revision = appRevision(app);
+  return enqueueRuntimeActivation(async () => {
+    let hosts = liveHosts(state, revision);
+    if (hosts.length === 0) return state.modules ?? [];
+    const documentState = runtimeDocumentState();
+    const activeApp = documentState.activeApp;
+    if (activeApp?.state === state && activeApp.revision === revision && sameHosts(activeApp.hosts, hosts)) return state.modules ?? [];
+    let modules = state.modules;
+    if (activeApp) {
+      modules ??= await loadModules(app.assets.moduleScripts);
+      state.modules = modules;
+      hosts = liveHosts(state, revision);
+      if (hosts.length === 0) return modules;
+      if (!supportsSoftNavigation(app, modules)) return await reloadDocument();
+      await deactivateApp(activeApp);
+      hosts = liveHosts(state, revision);
+      if (hosts.length === 0) {
+        cleanupAppState(app.id, state);
+        return modules;
+      }
+    }
+    const isFirstApp = documentState.firstInitializedAppId === void 0;
+    documentState.firstInitializedAppId ??= app.id;
+    ensureExportContext(app.notebookCode);
+    try {
+      modules ??= await loadModules(app.assets.moduleScripts);
+    } catch (error) {
+      cleanupInactiveApp(app.id, state);
+      throw error;
+    }
+    state.modules = modules;
+    hosts = liveHosts(state, revision);
+    const softNavigation = supportsSoftNavigation(app, modules);
+    if (hosts.length === 0) {
+      if (isFirstApp) {
+        if (!softNavigation) return await reloadDocument();
+        await stopAppOrReload(modules);
+      }
+      cleanupInactiveApp(app.id, state);
+      return modules;
+    }
+    const activationHosts = hosts;
+    try {
+      if (!isFirstApp || softNavigation) await Promise.all(modules.map(async (runtimeModule) => runtimeModule.initialize?.()));
+    } catch (error) {
+      if (softNavigation) await stopAppOrReload(modules);
+      cleanupInactiveApp(app.id, state);
+      throw error;
+    }
+    if (liveHosts(state, revision).length === 0) {
+      if (!softNavigation) return await reloadDocument();
+      await stopAppOrReload(modules);
+      cleanupInactiveApp(app.id, state);
+      return modules;
+    }
+    documentState.activeApp = {
+      app,
+      hosts: activationHosts,
+      replaceable: softNavigation,
+      revision,
+      state
+    };
+    return modules;
+  });
+}
+function enqueueRuntimeActivation(operation) {
+  const state = runtimeDocumentState();
+  const activation = (state.activation ?? Promise.resolve()).then(operation);
+  const tail = activation.then(() => void 0, () => void 0);
+  state.activation = tail;
+  tail.then(() => {
+    if (state.activation === tail) delete state.activation;
+  });
+  return activation;
+}
+function appRevision(app) {
+  const existing = appRevisions.get(app);
+  if (existing?.runtimeCellCount === app.runtimeCellCount && existing.notebookCode === app.notebookCode) return existing.revision;
+  const revision = JSON.stringify([
+    app.runtimeCellCount,
+    app.notebookCode ?? null
+  ]);
+  const cached = {
+    notebookCode: app.notebookCode,
+    revision,
+    runtimeCellCount: app.runtimeCellCount
+  };
+  appRevisions.set(app, cached);
+  queueMicrotask(() => {
+    if (appRevisions.get(app) === cached) appRevisions.delete(app);
+  });
+  return revision;
+}
+function liveHosts(state, revision) {
+  const hosts = /* @__PURE__ */ new Set();
+  for (const lease of state.leases) {
+    if (revision !== void 0 && lease.revision !== revision) continue;
+    if (lease.host.isConnected === false) continue;
+    hosts.add(lease.host);
+  }
+  return [
+    ...hosts
+  ];
+}
+function sameHosts(left, right) {
+  if (left.length !== right.length) return false;
+  const rightHosts = new Set(right);
+  return left.every((host) => rightHosts.has(host));
+}
+async function deactivateApp(activeApp) {
+  await stopAppOrReload(activeApp.state.modules ?? [], activeApp.app.id);
+  const documentState = runtimeDocumentState();
+  if (documentState.activeApp === activeApp) delete documentState.activeApp;
+  cleanupAppState(activeApp.app.id, activeApp.state);
+  if (!documentState.activeApp) delete window.__MARIMO_EXPORT_CONTEXT__;
+}
+async function stopAppOrReload(modules, appId) {
+  try {
+    await Promise.all(modules.map(async (runtimeModule) => runtimeModule.stopApp?.(appId)));
+  } catch (error) {
+    console.error(`Failed to stop marimo app${appId ? ` ${appId}` : ""}`, error);
+    return await reloadDocument();
+  }
+}
+function cleanupInactiveApp(appId, state) {
+  if (!runtimeDocumentState().activeApp) delete window.__MARIMO_EXPORT_CONTEXT__;
+  cleanupAppState(appId, state);
+}
+function cleanupAppState(appId, state) {
+  const documentState = runtimeDocumentState();
+  if (state.leases.size === 0 && documentState.activeApp?.state !== state && documentState.appAssets.get(appId) === state) documentState.appAssets.delete(appId);
+}
+function supportsSoftNavigation(app, modules) {
+  if (!hasSafeSessionHandoff(app.assets.version)) return false;
+  const runtimes = modules.filter((runtimeModule) => runtimeModule.initialize);
+  return runtimes.length > 0 && runtimes.every((runtimeModule) => runtimeModule.canReplaceApp?.() === true && typeof runtimeModule.stopApp === "function");
+}
+function hasSafeSessionHandoff(version) {
+  const match = /^(\d+)\.(\d+)\.(\d+)(?:\.post\d+)?(?:\+\S+)?$/.exec(version ?? "");
+  if (!match) return false;
+  const current = match.slice(1, 4).map(Number);
+  for (let index = 0; index < safeSessionHandoffVersion.length; index += 1) {
+    const difference = (current[index] ?? 0) - (safeSessionHandoffVersion[index] ?? 0);
+    if (difference !== 0) return difference > 0;
+  }
+  return true;
+}
+function ensureMountConfig(assets) {
+  if (!assets.version) return;
+  const mountConfig = window.__MARIMO_MOUNT_CONFIG__;
+  if (mountConfig && typeof mountConfig === "object") mountConfig.version ??= assets.version;
+  else window.__MARIMO_MOUNT_CONFIG__ = {
+    version: assets.version
+  };
+}
+function ensureExportContext(notebookCode) {
+  if (window.__MARIMO_EXPORT_CONTEXT__?.trusted === true && window.__MARIMO_EXPORT_CONTEXT__.notebookCode === notebookCode) return;
+  window.__MARIMO_EXPORT_CONTEXT__ = {
+    trusted: true,
+    ...notebookCode ? {
+      notebookCode
+    } : {}
+  };
+}
+function ensureHeadTags(tags) {
+  for (const tag of tags) {
+    if (!tag.tag) continue;
+    if (Array.from(document.head.querySelectorAll(tag.tag)).find((element2) => headTagMatches(element2, tag))) continue;
+    const element = document.createElement(tag.tag);
+    for (const [key, value] of Object.entries(tag.attrs)) element.setAttribute(key, value);
+    if (tag.text) element.textContent = tag.text;
+    document.head.append(element);
+  }
+}
+function ensureLinks(links) {
+  for (const attrs of links) {
+    if (!attrs.href) continue;
+    const href = new URL(attrs.href, document.baseURI).href;
+    const rel = attrs.rel ?? "";
+    if (Array.from(document.head.querySelectorAll("link[href]")).find((link2) => link2 instanceof HTMLLinkElement && link2.href === href && (link2.getAttribute("rel") || "") === rel)) continue;
+    const link = document.createElement("link");
+    for (const [key, value] of Object.entries(attrs)) link.setAttribute(key, value);
+    link.href = href;
+    document.head.append(link);
+  }
+}
+function headTagMatches(element, tag) {
+  if (!Object.entries(tag.attrs).every(([key, value]) => (element.getAttribute(key) || "") === value)) return false;
+  return !tag.text || element.textContent === tag.text;
+}
+function loadModules(sources) {
+  return Promise.all(sources.map(ensureModule));
+}
+function ensureModule(src) {
+  const href = moduleHref(src);
+  const state = runtimeDocumentState();
+  const existing = state.loadedModules.get(href);
+  if (existing) return existing;
+  const promise = import(
+    /* webpackIgnore: true */
+    /* @vite-ignore */
+    href
+  );
+  promise.then((runtimeModule) => {
+    state.resolvedModules.set(href, runtimeModule);
+  }, () => {
+    state.loadedModules.delete(href);
+  });
+  state.loadedModules.set(href, promise);
+  return promise;
+}
+var navigationStateSymbol = Symbol.for("@marimo-team/islands-bridge/navigation-state");
+function retainDocumentNavigation() {
+  if (typeof document === "undefined" || typeof history === "undefined") return () => {
+  };
+  const documentState = navigationDocumentState();
+  if (documentState.lease) {
+    documentState.lease.references += 1;
+    return releaseOnce(documentState.lease);
+  }
+  const originalPushState = history.pushState.bind(history);
+  const originalReplaceState = history.replaceState.bind(history);
+  const click = (event) => {
+    const anchor = closestAnchor(event.target);
+    if (!anchor || !shouldUseDocumentNavigation(event, anchor)) return;
+    event.preventDefault();
+    window.location.assign(anchor.href);
+  };
+  const pushState = function(...args) {
+    const url = documentNavigationUrl(args[2]);
+    if (url) {
+      window.location.assign(url.href);
+      return;
+    }
+    return originalPushState(...args);
+  };
+  const replaceState = function(...args) {
+    const url = documentNavigationUrl(args[2]);
+    if (url) {
+      window.location.replace(url.href);
+      return;
+    }
+    return originalReplaceState(...args);
+  };
+  const popstate = (event) => {
+    event.stopImmediatePropagation();
+    window.location.reload();
+  };
+  const lease = {
+    click,
+    originalPushState,
+    originalReplaceState,
+    popstate,
+    pushState,
+    references: 1,
+    replaceState
+  };
+  documentState.lease = lease;
+  history.pushState = pushState;
+  history.replaceState = replaceState;
+  document.addEventListener("click", click, true);
+  window.addEventListener("popstate", popstate, true);
+  return releaseOnce(lease);
+}
+function navigationDocumentState() {
+  const target = window;
+  return target[navigationStateSymbol] ??= {};
+}
+function releaseOnce(lease) {
+  let released = false;
+  return () => {
+    const documentState = navigationDocumentState();
+    if (released || documentState.lease !== lease) return;
+    released = true;
+    lease.references -= 1;
+    if (lease.references > 0) return;
+    document.removeEventListener("click", lease.click, true);
+    window.removeEventListener("popstate", lease.popstate, true);
+    if (history.pushState === lease.pushState) history.pushState = lease.originalPushState;
+    if (history.replaceState === lease.replaceState) history.replaceState = lease.originalReplaceState;
+    delete documentState.lease;
+  };
+}
+function closestAnchor(target) {
+  if (!(target instanceof Element)) return null;
+  const anchor = target.closest("a[href]");
+  return anchor instanceof HTMLAnchorElement ? anchor : null;
+}
+function shouldUseDocumentNavigation(event, anchor) {
+  if (event.defaultPrevented || event.button !== 0) return false;
+  if (event.metaKey || event.altKey || event.ctrlKey || event.shiftKey) return false;
+  if (anchor.target && anchor.target !== "_self") return false;
+  if (anchor.hasAttribute("download")) return false;
+  return documentNavigationUrl(anchor.href) !== void 0;
+}
+function documentNavigationUrl(href) {
+  if (href === void 0 || href === null) return void 0;
+  let url;
+  try {
+    url = new URL(href, document.baseURI);
+  } catch {
+    return;
+  }
+  if (url.origin !== window.location.origin) return void 0;
+  if (url.pathname === window.location.pathname && url.search === window.location.search) return;
+  return url;
+}
+var themeDataAttributes = [
+  "data-theme",
+  "data-color-mode",
+  "data-mode"
+];
+var themeAttributeFilter = [
+  "class",
+  "style",
+  "data-marimo-theme-mode",
+  ...themeDataAttributes
+];
+function themeModeFromHost(host) {
+  return normalizeThemeMode(host.getAttribute("data-marimo-theme-mode")) ?? "auto";
+}
+function resolveTheme(themeMode, host, themeResolver) {
+  if (themeMode !== "auto") return themeMode;
+  if (host) {
+    const resolved = themeResolver?.(host);
+    if (resolved) return resolved;
+  }
+  return currentTheme(host);
+}
+function currentTheme(host) {
+  for (const element of themeAncestors(host)) {
+    const explicitTheme = themeFromClasses(element) ?? themeFromAttributes(element);
+    if (explicitTheme) return explicitTheme;
+  }
+  if (host && typeof getComputedStyle === "function") {
+    const schemes = getComputedStyle(host).colorScheme.split(/\s+/);
+    if (schemes.length === 1 && schemes[0] === "dark") return "dark";
+    if (schemes.length === 1 && schemes[0] === "light") return "light";
+    if (schemes.includes("dark") && schemes.includes("light")) return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+  return "light";
+}
+function themeAncestors(host) {
+  const elements = [];
+  let element = host ?? document.body;
+  while (element) {
+    elements.push(element);
+    element = element.parentElement;
+  }
+  return elements;
+}
+function themeFromClasses(element) {
+  if (element.classList.contains("dark") || element.classList.contains("dark-theme")) return "dark";
+  if (element.classList.contains("light") || element.classList.contains("light-theme")) return "light";
+}
+function themeFromAttributes(element) {
+  for (const attribute of themeDataAttributes) {
+    const theme = normalizeThemeMode(element.getAttribute(attribute));
+    if (theme === "light" || theme === "dark") return theme;
+  }
+}
+function normalizeThemeMode(value) {
+  if (value === "auto" || value === "light" || value === "dark") return value;
+}
+var SHADOW_THEME_STYLE_ID = "marimo-island-shadow-theme";
+var SHADOW_THEME_CSS = `
+:host {
+  color-scheme: inherit;
+  --_marimo-island-shadow-background: var(--marimo-island-background, #ffffff);
+  --_marimo-island-shadow-foreground: var(--marimo-island-foreground, #0f172a);
+  --_marimo-island-shadow-card: var(--marimo-island-surface, #ffffff);
+  --_marimo-island-shadow-primary: var(--marimo-island-accent, #0880ea);
+  --_marimo-island-shadow-primary-foreground: var(
+    --marimo-island-accent-foreground,
+    #f8fafc
+  );
+  --_marimo-island-shadow-muted: var(
+    --marimo-island-muted-surface,
+    #f1f5f9
+  );
+  --_marimo-island-shadow-muted-foreground: var(
+    --marimo-island-muted-foreground,
+    #64748b
+  );
+  --_marimo-island-shadow-border: var(--marimo-island-border, #e2e8f0);
+  --_marimo-island-shadow-input: var(--marimo-island-border, #a3a3a3);
+  --_marimo-island-shadow-code-background: var(
+    --marimo-island-code-background,
+    var(--_marimo-island-shadow-background)
+  );
+  --_marimo-island-shadow-code-foreground: var(
+    --marimo-island-code-foreground,
+    var(--_marimo-island-shadow-foreground)
+  );
+  --background: var(--marimo-island-background, #ffffff);
+  --foreground: var(--marimo-island-foreground, #0f172a);
+  --card: var(--marimo-island-surface, #ffffff);
+  --card-foreground: var(--foreground);
+  --popover: var(--marimo-island-surface, #ffffff);
+  --popover-foreground: var(--foreground);
+  --primary: var(--marimo-island-accent, #0880ea);
+  --primary-foreground: var(--marimo-island-accent-foreground, #f8fafc);
+  --secondary: var(
+    --marimo-island-muted-surface,
+    #f1f5f9
+  );
+  --secondary-foreground: var(--foreground);
+  --muted: var(
+    --marimo-island-muted-surface,
+    #f1f5f9
+  );
+  --muted-foreground: var(
+    --marimo-island-muted-foreground,
+    #64748b
+  );
+  --accent: var(--marimo-island-accent, #0880ea);
+  --accent-foreground: var(--marimo-island-accent-foreground, #f8fafc);
+  --border: var(--marimo-island-border, #e2e8f0);
+  --input: var(--marimo-island-border, #a3a3a3);
+  --ring: var(--marimo-island-focus-ring, var(--primary));
+  --cm-background: var(--marimo-island-code-background, var(--background));
+  --cm-foreground: var(--marimo-island-code-foreground, var(--foreground));
+  --cm-comment: var(--marimo-island-muted-foreground, var(--muted-foreground));
+  --radius: var(--marimo-island-radius, 0.5rem);
+  --_marimo-island-shadow-hover-background: color-mix(
+    in srgb,
+    var(--_marimo-island-shadow-foreground) 8%,
+    transparent
+  );
+  --_marimo-island-shadow-error-background: var(
+    --marimo-island-error-background,
+    color-mix(in srgb, #dc2626 6%, var(--_marimo-island-shadow-background))
+  );
+  --_marimo-island-shadow-error-border: var(
+    --marimo-island-error-border,
+    color-mix(in srgb, #dc2626 42%, var(--_marimo-island-shadow-border))
+  );
+  --_marimo-island-shadow-error-foreground: var(
+    --marimo-island-error-foreground,
+    var(--_marimo-island-shadow-foreground)
+  );
+  --_marimo-island-shadow-error-title: var(--marimo-island-error-accent, #dc2626);
+}
+
+:host([data-marimo-theme="dark"]) {
+  color-scheme: dark;
+  --_marimo-island-shadow-background: var(--marimo-island-background, #181c1a);
+  --_marimo-island-shadow-foreground: var(--marimo-island-foreground, #eceeed);
+  --_marimo-island-shadow-card: var(--marimo-island-surface, #252927);
+  --_marimo-island-shadow-muted: var(
+    --marimo-island-muted-surface,
+    #020303
+  );
+  --_marimo-island-shadow-muted-foreground: var(
+    --marimo-island-muted-foreground,
+    #aab2af
+  );
+  --_marimo-island-shadow-border: var(--marimo-island-border, #3b403e);
+  --_marimo-island-shadow-input: var(--marimo-island-border, #474c4a);
+  --_marimo-island-shadow-code-background: var(--marimo-island-code-background, #282c34);
+  --_marimo-island-shadow-code-foreground: var(
+    --marimo-island-code-foreground,
+    var(--_marimo-island-shadow-foreground)
+  );
+  --background: var(--marimo-island-background, #181c1a);
+  --foreground: var(--marimo-island-foreground, #eceeed);
+  --card: var(--marimo-island-surface, #252927);
+  --card-foreground: var(--foreground);
+  --popover: var(--marimo-island-surface, #252927);
+  --popover-foreground: var(--foreground);
+  --secondary: var(
+    --marimo-island-muted-surface,
+    #020303
+  );
+  --secondary-foreground: var(--foreground);
+  --muted: var(
+    --marimo-island-muted-surface,
+    #020303
+  );
+  --muted-foreground: var(
+    --marimo-island-muted-foreground,
+    #aab2af
+  );
+  --border: var(--marimo-island-border, #3b403e);
+  --input: var(--marimo-island-border, #474c4a);
+  --cm-background: var(--marimo-island-code-background, #282c34);
+  --cm-foreground: var(--marimo-island-code-foreground, var(--foreground));
+  --cm-comment: var(--marimo-island-muted-foreground, var(--muted-foreground));
+  --_marimo-island-shadow-hover-background: rgba(255, 255, 255, 0.08);
+  --_marimo-island-shadow-error-background: var(
+    --marimo-island-error-background,
+    color-mix(in srgb, #f87171 8%, var(--_marimo-island-shadow-background))
+  );
+  --_marimo-island-shadow-error-border: var(
+    --marimo-island-error-border,
+    color-mix(in srgb, #f87171 42%, var(--_marimo-island-shadow-border))
+  );
+  --_marimo-island-shadow-error-foreground: var(
+    --marimo-island-error-foreground,
+    var(--_marimo-island-shadow-foreground)
+  );
+  --_marimo-island-shadow-error-title: var(--marimo-island-error-accent, #fca5a5);
+}
+
+:host([data-marimo-theme="light"]) {
+  color-scheme: light;
+}
+
+:host([data-marimo-theme="dark"]) :where(.contents) {
+  color-scheme: dark !important;
+}
+
+:host([data-marimo-theme="light"]) :where(.contents) {
+  color-scheme: light !important;
+}
+
+:host(:not([data-min-height])) :where(.cm-editor) {
+  min-height: 0 !important;
+}
+
+:host :where(.marimo .h-3) {
+  height: calc(var(--spacing, 0.25rem) * 3) !important;
+}
+
+:host :where(.marimo .w-3) {
+  width: calc(var(--spacing, 0.25rem) * 3) !important;
+}
+
+:host :where(.marimo .h-4) {
+  height: calc(var(--spacing, 0.25rem) * 4) !important;
+  min-height: calc(var(--spacing, 0.25rem) * 4) !important;
+}
+
+:host :where(.marimo .w-4) {
+  width: calc(var(--spacing, 0.25rem) * 4) !important;
+}
+
+:host :where(.marimo .h-6) {
+  height: calc(var(--spacing, 0.25rem) * 6) !important;
+  min-height: calc(var(--spacing, 0.25rem) * 6) !important;
+}
+
+:host :where(.marimo .h-px) {
+  height: 1px !important;
+}
+
+:host :where(.marimo .border-input) {
+  border-color: var(--_marimo-island-shadow-input, #a3a3a3) !important;
+}
+
+:host :where(.marimo .border-primary) {
+  border-color: var(--_marimo-island-shadow-primary, #0880ea) !important;
+}
+
+:host :where(.marimo .bg-background) {
+  background-color: var(--_marimo-island-shadow-background, #ffffff) !important;
+}
+
+:host :where(.marimo .bg-border) {
+  background-color: var(--_marimo-island-shadow-border, #e2e8f0) !important;
+}
+
+:host :where(.marimo .text-muted-foreground) {
+  color: var(--_marimo-island-shadow-muted-foreground, #64748b) !important;
+}
+
+:host :where(.marimo .placeholder\\:text-muted-foreground)::placeholder {
+  color: var(--_marimo-island-shadow-muted-foreground, #64748b) !important;
+}
+
+:host :where(.marimo [data-testid="marimo-plugin-number-input"] input) {
+  min-height: calc(var(--spacing, 0.25rem) * 6) !important;
+}
+
+:host :where(.marimo [data-testid="marimo-plugin-number-input"] button) {
+  align-items: center !important;
+  display: flex !important;
+  height: auto !important;
+  justify-content: center !important;
+  min-height: 0 !important;
+}
+
+:host([data-marimo-theme="dark"]) :where(.marimo) {
+  background: transparent !important;
+  color: var(--_marimo-island-shadow-foreground, #eceeed) !important;
+}
+
+:host([data-marimo-theme="dark"])
+  :where(
+    .admonition,
+    [class*="admonition"],
+    .callout,
+    .marimo *:not(.cm-editor):not(.cm-editor *),
+    .markdown.prose,
+    .markdown.prose *,
+    .codehilite,
+    .codehilite *,
+    .highlight,
+    .highlight *,
+    pre,
+    pre *,
+    code,
+    code *,
+    marimo-accordion,
+    marimo-accordion *,
+    table,
+    thead,
+    tbody,
+    tr,
+    th,
+    td,
+    .marimo-json-output,
+    .marimo-json-output *,
+    .json-viewer-theme-light,
+    .json-viewer-theme-light *,
+    label,
+    input,
+    output,
+    [role="cell"],
+    [role="columnheader"],
+    [role="rowheader"]
+  ) {
+  color: var(--_marimo-island-shadow-foreground, #eceeed) !important;
+}
+
+:host([data-marimo-theme="dark"])
+  :where(.admonition, [class*="admonition"], .callout) {
+  background: var(--_marimo-island-shadow-muted, #020303) !important;
+  border-color: var(--_marimo-island-shadow-border, #3b403e) !important;
+}
+
+:host([data-marimo-theme="dark"])
+  :where(
+    .bg-background,
+    .bg-card,
+    .bg-muted,
+    .bg-secondary,
+    .bg-white,
+    [class*="bg-background"],
+    [class*="bg-card"],
+    [class*="bg-muted"],
+    [class*="bg-secondary"],
+    [class*="bg-white"]
+  ) {
+  background: var(--_marimo-island-shadow-card, #252927) !important;
+  color: var(--_marimo-island-shadow-foreground, #eceeed) !important;
+}
+
+:host([data-marimo-theme="dark"]) :where(input, textarea, select) {
+  background: var(--_marimo-island-shadow-card, #252927) !important;
+  border-color: var(--_marimo-island-shadow-border, #3b403e) !important;
+  color: var(--_marimo-island-shadow-foreground, #eceeed) !important;
+  color-scheme: dark !important;
+}
+
+:host([data-marimo-theme="dark"]) :where(input, textarea)::placeholder {
+  color: var(--_marimo-island-shadow-muted-foreground, #aab2af) !important;
+}
+
+:host([data-marimo-theme="dark"])
+  :where(.cm-editor, .cm-scroller, .cm-content) {
+  background: var(--_marimo-island-shadow-code-background, #282c34) !important;
+  color: var(--_marimo-island-shadow-code-foreground, #abb2bf) !important;
+  --cm-background: var(--_marimo-island-shadow-code-background, #282c34) !important;
+  --cm-foreground: var(--_marimo-island-shadow-code-foreground, #abb2bf) !important;
+}
+
+:host([data-marimo-theme="dark"]) :where(.cm-gutters) {
+  background: var(--_marimo-island-shadow-background, #181c1a) !important;
+  border-color: var(--_marimo-island-shadow-border, #3b403e) !important;
+  color: var(--_marimo-island-shadow-muted-foreground, #aab2af) !important;
+}
+
+:host([data-marimo-theme="dark"]) :where(.cm-activeLine, .cm-activeLineGutter) {
+  background: var(--_marimo-island-shadow-hover-background, rgba(255, 255, 255, 0.08)) !important;
+}
+
+:host([data-marimo-theme="dark"]) :where([role="alert"]) {
+  background: var(--_marimo-island-shadow-error-background, #241b1b) !important;
+  border-color: var(--_marimo-island-shadow-error-border, rgba(248, 113, 113, 0.42)) !important;
+  color: var(--_marimo-island-shadow-error-foreground, #eceeed) !important;
+}
+
+:host([data-marimo-theme="dark"])
+  :where([role="alert"])
+  :where(h1, h2, h3, h4, h5, h6, .text-destructive) {
+  color: var(--_marimo-island-shadow-error-title, #fca5a5) !important;
+}
+`;
+function installMarimoShadowThemeBridge(host, resolveTheme2) {
+  const observers = /* @__PURE__ */ new Map();
+  const ownerDocument = host.ownerDocument ?? document;
+  const sync = () => {
+    applyMarimoShadowTheme(host, resolveTheme2());
+    const roots = new Set(shadowHostsIn(host, ownerDocument).map((element) => element.shadowRoot));
+    for (const [root, observer] of observers) {
+      if (roots.has(root)) continue;
+      observer.disconnect();
+      observers.delete(root);
+    }
+    for (const root of roots) {
+      if (observers.has(root)) continue;
+      const observer = new MutationObserver(sync);
+      observer.observe(root, {
+        childList: true,
+        subtree: true
+      });
+      observers.set(root, observer);
+    }
+  };
+  const hostObserver = new MutationObserver(sync);
+  hostObserver.observe(host, {
+    childList: true,
+    subtree: true
+  });
+  sync();
+  const timers = [
+    0,
+    50,
+    250,
+    1e3
+  ].map((delay) => window.setTimeout(sync, delay));
+  return () => {
+    hostObserver.disconnect();
+    for (const observer of observers.values()) observer.disconnect();
+    observers.clear();
+    for (const timer of timers) window.clearTimeout(timer);
+  };
+}
+function applyMarimoShadowTheme(host, theme) {
+  const ownerDocument = host.ownerDocument ?? document;
+  for (const element of shadowHostsIn(host, ownerDocument)) {
+    if (element.getAttribute("data-marimo-theme") !== theme) element.setAttribute("data-marimo-theme", theme);
+    if (element instanceof HTMLElement) element.style.colorScheme = theme;
+    ensureShadowThemeStyle(element.shadowRoot);
+    applyShadowTheme(element.shadowRoot, theme);
+  }
+}
+function shadowHostsIn(root, document2) {
+  const hosts = [];
+  const walker = document2.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+  let node = walker.nextNode();
+  while (node) {
+    const element = node;
+    if (element.shadowRoot) {
+      hosts.push(element);
+      hosts.push(...shadowHostsIn(element.shadowRoot, document2));
+    }
+    node = walker.nextNode();
+  }
+  return hosts;
+}
+function ensureShadowThemeStyle(root) {
+  const existing = root.querySelector(`style#${SHADOW_THEME_STYLE_ID}`);
+  if (existing) {
+    if (existing.nextSibling) root.append(existing);
+    return;
+  }
+  const style = root.ownerDocument.createElement("style");
+  style.id = SHADOW_THEME_STYLE_ID;
+  style.textContent = SHADOW_THEME_CSS;
+  root.append(style);
+}
+function applyShadowTheme(root, theme) {
+  const opposite = theme === "dark" ? "light" : "dark";
+  for (const element of root.querySelectorAll(".contents, .markdown.prose")) {
+    element.classList.add(theme);
+    element.classList.remove(opposite);
+    if (element.getAttribute("data-marimo-theme") !== theme) element.setAttribute("data-marimo-theme", theme);
+  }
+}
+var themeBridges = /* @__PURE__ */ new WeakMap();
+function installMarimoThemeBridge(host, options = {}) {
+  const themeMode = () => options.theme === void 0 || options.theme === "auto" ? themeModeFromHost(host) : options.theme;
+  const cleanupShadowTheme = installMarimoShadowThemeBridge(host, () => resolveTheme(themeMode(), host, options.themeResolver));
+  const update = () => applyMarimoTheme(host, themeMode(), options.themeResolver);
+  const ancestorObserver = new MutationObserver(update);
+  const refresh = () => {
+    ancestorObserver.disconnect();
+    let ancestor = host;
+    while (ancestor) {
+      ancestorObserver.observe(ancestor, {
+        attributes: true,
+        attributeFilter: themeAttributeFilter
+      });
+      ancestor = ancestor.parentElement;
+    }
+    update();
+  };
+  refresh();
+  const bridge = {
+    refresh
+  };
+  themeBridges.set(host, bridge);
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  media.addEventListener("change", update);
+  const timers = [
+    0,
+    50,
+    250,
+    1e3
+  ].map((delay) => window.setTimeout(update, delay));
+  return () => {
+    const registered = themeBridges.get(host) === bridge;
+    if (registered) themeBridges.delete(host);
+    ancestorObserver.disconnect();
+    media.removeEventListener("change", update);
+    for (const timer of timers) window.clearTimeout(timer);
+    cleanupShadowTheme();
+    if (registered) delete host.dataset.marimoTheme;
+  };
+}
+function refreshMarimoThemeBridge(host) {
+  themeBridges.get(host)?.refresh();
+}
+function applyMarimoTheme(host, themeMode = themeModeFromHost(host), themeResolver) {
+  const theme = resolveTheme(themeMode, host, themeResolver);
+  host.dataset.marimoTheme = theme;
+  applyMarimoShadowTheme(host, theme);
+}
+var reconnectors = /* @__PURE__ */ new WeakMap();
+function assertCurrentDocument(host) {
+  if (typeof document !== "undefined" && host.ownerDocument !== document) throw new Error("Marimo islands must be mounted in the current document");
+}
+function reconnectMarimoIsland(host) {
+  reconnectors.get(host)?.();
+}
+function mountMarimoIsland(host, payload, options = {}) {
+  assertCurrentDocument(host);
+  const initialTheme = options.theme ?? themeModeFromHost(host);
+  const currentTheme2 = () => options.theme === void 0 || options.theme === "auto" ? themeModeFromHost(host) : options.theme;
+  let active = true;
+  let activateAssets;
+  let releaseAssets;
+  let releaseNavigation;
+  host.classList.add("marimo-island-host");
+  if (options.host) host.dataset.marimoHost = options.host;
+  host.dataset.marimoThemeMode = initialTheme;
+  if (payload.app) host.dataset.marimoAppId = payload.app.id;
+  else delete host.dataset.marimoAppId;
+  host.dataset.marimoCellIndex = String(payload.cell.index);
+  host.innerHTML = payload.cell.html;
+  if (!payload.app || !hasConfirmedSoftNavigationAssets(payload.app)) releaseNavigation = retainDocumentNavigation();
+  const cleanupTheme = installMarimoThemeBridge(host, {
+    ...options.theme !== void 0 ? {
+      theme: options.theme
+    } : {},
+    ...options.themeResolver ? {
+      themeResolver: options.themeResolver
+    } : {}
+  });
+  const handleActivation = (supportsSoftNavigation2) => {
+    if (!active) return;
+    if (supportsSoftNavigation2) {
+      releaseNavigation?.();
+      releaseNavigation = void 0;
+    } else releaseNavigation ??= retainDocumentNavigation();
+    applyMarimoTheme(host, currentTheme2(), options.themeResolver);
+  };
+  if (payload.app) try {
+    const lease = acquireAssets(payload.app, host);
+    activateAssets = lease.activate;
+    releaseAssets = lease.release;
+    lease.ready.then(handleActivation).catch((error) => {
+      if (active) renderMarimoIslandError(host, error);
+    });
+  } catch (error) {
+    renderMarimoIslandError(host, error);
+  }
+  else applyMarimoTheme(host, currentTheme2(), options.themeResolver);
+  const reconnect = () => {
+    if (!active) return;
+    refreshMarimoThemeBridge(host);
+    activateAssets?.().then(handleActivation).catch((error) => {
+      if (active) renderMarimoIslandError(host, error);
+    });
+  };
+  reconnectors.set(host, reconnect);
+  return () => {
+    active = false;
+    if (reconnectors.get(host) === reconnect) reconnectors.delete(host);
+    releaseAssets?.();
+    cleanupTheme();
+    releaseNavigation?.();
+    host.replaceChildren();
+  };
+}
+function renderMarimoIslandError(host, error) {
+  const details = document.createElement("details");
+  details.open = true;
+  details.className = "marimo-island-error";
+  const summary = document.createElement("summary");
+  summary.textContent = "Failed to load marimo runtime";
+  const pre = document.createElement("pre");
+  pre.textContent = error instanceof Error ? error.message : String(error);
+  details.append(summary, pre);
+  host.append(details);
+}
+
+// npm:@marimo-team/mdx-marimo@0.0.5/dist/bridge/protocol/index.js
+function isMarimoPageCellPayload(value) {
+  if (!isRecord(value) || value.protocolVersion !== 2) return false;
+  if (!isPageCell(value.cell)) return false;
+  return value.app === null || isPageRuntime(value.app);
+}
+function isMarimoPageCellReferencePayload(value) {
+  return isRecord(value) && value.protocolVersion === 2 && typeof value.appId === "string" && value.appId.length > 0 && isPageCell(value.cell);
+}
+function isPageCell(value) {
+  return isRecord(value) && isFiniteNumber(value.index) && typeof value.html === "string" && isCellOptions(value.options) && (value.diagnostics === void 0 || isArrayOf(value.diagnostics, isDiagnostic));
+}
+function isPageRuntime(value) {
+  return isRecord(value) && typeof value.id === "string" && value.id.length > 0 && isFiniteNumber(value.runtimeCellCount) && isRuntimeAssets(value.assets) && (value.notebookCode === void 0 || typeof value.notebookCode === "string");
+}
+function isRuntimeAssets(value) {
+  return isRecord(value) && isArrayOf(value.moduleScripts, isString) && isArrayOf(value.links, isStringRecord) && (value.headTags === void 0 || isArrayOf(value.headTags, isHeadTag)) && (value.version === void 0 || typeof value.version === "string");
+}
+function isHeadTag(value) {
+  return isRecord(value) && typeof value.tag === "string" && isStringRecord(value.attrs) && (value.text === void 0 || typeof value.text === "string");
+}
+function isCellOptions(value) {
+  return isRecord(value) && (value.language === "python" || value.language === "sql" || value.language === "markdown") && isRenderOptions(value.render) && isRecord(value.execution) && typeof value.execution.enabled === "boolean" && isRecord(value.marimo) && typeof value.marimo.disabled === "boolean" && typeof value.marimo.unparsable === "boolean" && (value.sql === void 0 || isRecord(value.sql) && (value.sql.outputName === void 0 || typeof value.sql.outputName === "string") && (value.sql.engine === void 0 || typeof value.sql.engine === "string")) && (value.name === void 0 || typeof value.name === "string") && (value.column === void 0 || isFiniteNumber(value.column));
+}
+function isRenderOptions(value) {
+  return isRecord(value) && typeof value.source === "boolean" && typeof value.output === "boolean" && typeof value.include === "boolean" && typeof value.editor === "boolean" && typeof value.error === "boolean" && typeof value.serverOutput === "boolean";
+}
+function isDiagnostic(value) {
+  return isRecord(value) && (value.severity === "warning" || value.severity === "error") && typeof value.message === "string" && (value.cellIndex === void 0 || isFiniteNumber(value.cellIndex)) && (value.line === void 0 || isFiniteNumber(value.line));
+}
+function isStringRecord(value) {
+  return isRecord(value) && Object.values(value).every(isString);
+}
+function isArrayOf(value, guard) {
+  return Array.isArray(value) && Array.from(value).every(guard);
+}
+function isString(value) {
+  return typeof value === "string";
+}
+function isFiniteNumber(value) {
+  return typeof value === "number" && Number.isFinite(value);
+}
+function isRecord(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+// npm:@marimo-team/mdx-marimo@0.0.5/dist/bridge/element/index.js
+var elementMountSymbol = Symbol.for("@marimo-team/islands-bridge/element-mount");
+var elementMountRegistrySymbol = Symbol.for("@marimo-team/islands-bridge/element-mount-registry");
+var pageAppRegistrySymbol = Symbol.for("@marimo-team/islands-bridge/page-app-registry");
+var elementRetentionSymbol = Symbol.for("@marimo-team/islands-bridge/element-retention");
+var finishRetainedReleaseSymbol = Symbol.for("@marimo-team/islands-bridge/finish-retained-release");
+function defineMarimoIslandElement({ name, host, themeResolver }) {
+  if (typeof customElements === "undefined" || typeof HTMLElement === "undefined") return void 0;
+  const existing = customElements.get(name);
+  if (existing) return existing;
+  const constructor = createMarimoIslandElementConstructor(host, themeResolver);
+  customElements.define(name, constructor);
+  return constructor;
+}
+function createMarimoIslandElementConstructor(hostKind, themeResolver) {
+  function MarimoElementBase() {
+    return Reflect.construct(HTMLElement, [], this.constructor);
+  }
+  Object.setPrototypeOf(MarimoElementBase, HTMLElement);
+  MarimoElementBase.prototype = HTMLElement.prototype;
+  const ElementBase = MarimoElementBase;
+  return class MarimoIslandElement extends ElementBase {
+    #cleanup;
+    #appRegistration;
+    #cleanupAppWait;
+    #disconnectTimer;
+    #mountQueued = false;
+    #payload;
+    #payloadObserver;
+    #retainedDisconnect = false;
+    #serializedPayload;
+    get payload() {
+      return this.#serializedPayload;
+    }
+    set payload(payload) {
+      if (payload !== void 0 && !isMarimoPageCellPayload(payload) && !isMarimoPageCellReferencePayload(payload)) throw new TypeError("Invalid marimo page cell payload");
+      if (payload === this.#serializedPayload) return;
+      this.#cleanup?.();
+      this.#cleanup = void 0;
+      this.#stopAppRegistration();
+      this.#stopAppWait();
+      this.#stopPayloadWait();
+      this.#serializedPayload = payload;
+      this.#payload = void 0;
+      if (this.isConnected && payload) this.#queueMount();
+    }
+    connectedCallback() {
+      const retainedMount = this.#disconnectTimer !== void 0 || this.#retainedDisconnect;
+      if (this.#disconnectTimer !== void 0) {
+        clearTimeout(this.#disconnectTimer);
+        this.#disconnectTimer = void 0;
+      }
+      this.#retainedDisconnect = false;
+      if (retainedMount && this.#cleanup) reconnectMarimoIsland(this);
+      else this.#queueMount();
+    }
+    disconnectedCallback() {
+      if (this.#disconnectTimer !== void 0) clearTimeout(this.#disconnectTimer);
+      this.#disconnectTimer = setTimeout(() => {
+        this.#disconnectTimer = void 0;
+        if (this[elementRetentionSymbol]?.cancelRelease) {
+          this.#retainedDisconnect = true;
+          return;
+        }
+        this.#teardown();
+      }, 0);
+    }
+    [finishRetainedReleaseSymbol]() {
+      if (this.isConnected) return;
+      if (this.#disconnectTimer !== void 0) {
+        clearTimeout(this.#disconnectTimer);
+        this.#disconnectTimer = void 0;
+      }
+      this.#retainedDisconnect = false;
+      this.#teardown();
+    }
+    #queueMount() {
+      if (this.#mountQueued) return;
+      this.#mountQueued = true;
+      queueMicrotask(() => {
+        this.#mountQueued = false;
+        if (this.isConnected) this.#mount();
+      });
+    }
+    #mount() {
+      try {
+        this.#serializedPayload = this.#serializedPayload ?? readPayload(this);
+        if (!this.#serializedPayload) {
+          this.#waitForPayload();
+          return;
+        }
+        this.#payload = this.#payload ?? resolvePayload(this.ownerDocument, this.#serializedPayload);
+        if (!this.#payload) {
+          const reference = this.#serializedPayload;
+          if (!isMarimoPageCellReferencePayload(reference)) throw new Error("Invalid marimo page cell reference");
+          this.#cleanup ??= mountMarimoIsland(this, staticPayload(reference), {
+            ...hostKind ? {
+              host: hostKind
+            } : {},
+            ...themeResolver ? {
+              themeResolver
+            } : {}
+          });
+          this.#waitForApp(reference.appId);
+          return;
+        }
+        if (this.#payload.app) this.#registerApp(this.#payload.app);
+        this.#stopAppWait();
+        this.#stopPayloadWait();
+        this.#cleanup?.();
+        this.#cleanup = mountMarimoIsland(this, this.#payload, {
+          ...hostKind ? {
+            host: hostKind
+          } : {},
+          ...themeResolver ? {
+            themeResolver
+          } : {}
+        });
+      } catch (error) {
+        this.#cleanup?.();
+        this.#cleanup = void 0;
+        this.#stopAppRegistration();
+        this.#stopAppWait();
+        this.#stopPayloadWait();
+        this.classList.add("marimo-island-host");
+        if (hostKind) this.dataset.marimoHost = hostKind;
+        this.innerHTML = "";
+        renderMarimoIslandError(this, error);
+      }
+    }
+    #waitForPayload() {
+      if (this.#payloadObserver || typeof MutationObserver === "undefined") return;
+      this.#payloadObserver = new MutationObserver(() => {
+        if (readPayloadSource(this)) this.#queueMount();
+      });
+      this.#payloadObserver.observe(this, {
+        childList: true,
+        subtree: true
+      });
+    }
+    #waitForApp(appId) {
+      if (this.#cleanupAppWait) return;
+      this.#cleanupAppWait = waitForPageApp(this.ownerDocument, appId, () => {
+        this.#cleanupAppWait = void 0;
+        this.#queueMount();
+      });
+    }
+    #registerApp(app) {
+      if (this.#appRegistration?.app === app) return;
+      this.#stopAppRegistration();
+      this.#appRegistration = {
+        app,
+        release: registerPageApp(this.ownerDocument, app, this)
+      };
+    }
+    #stopAppRegistration() {
+      this.#appRegistration?.release();
+      this.#appRegistration = void 0;
+    }
+    #stopAppWait() {
+      this.#cleanupAppWait?.();
+      this.#cleanupAppWait = void 0;
+    }
+    #stopPayloadWait() {
+      this.#payloadObserver?.disconnect();
+      this.#payloadObserver = void 0;
+    }
+    #teardown() {
+      this.#cleanup?.();
+      this.#cleanup = void 0;
+      this.#stopAppRegistration();
+      this.#stopAppWait();
+      this.#stopPayloadWait();
+      if (this.#serializedPayload && isMarimoPageCellReferencePayload(this.#serializedPayload)) this.#payload = void 0;
+    }
+  };
+}
+function readPayload(host) {
+  const source = readPayloadSource(host);
+  if (!source) return void 0;
+  const payload = JSON.parse(source);
+  if (isMarimoPageCellPayload(payload) || isMarimoPageCellReferencePayload(payload)) return payload;
+  throw new Error("Invalid marimo page cell payload");
+}
+function resolvePayload(document2, payload) {
+  if (isMarimoPageCellPayload(payload)) return payload;
+  const registration = pageAppDocumentState(document2).apps.get(payload.appId);
+  if (!registration) return void 0;
+  return {
+    protocolVersion: payload.protocolVersion,
+    app: registration.app,
+    cell: payload.cell
+  };
+}
+function staticPayload(payload) {
+  return {
+    protocolVersion: payload.protocolVersion,
+    app: null,
+    cell: payload.cell
+  };
+}
+function registerPageApp(document2, app, owner) {
+  const state = pageAppDocumentState(document2);
+  let registration = state.apps.get(app.id);
+  if (!registration || registration.app !== app) {
+    registration = {
+      app,
+      owners: /* @__PURE__ */ new Set()
+    };
+    state.apps.set(app.id, registration);
+  }
+  registration.owners.add(owner);
+  const waiters = state.waiters.get(app.id);
+  if (waiters) {
+    state.waiters.delete(app.id);
+    for (const waiter of waiters) waiter();
+  }
+  return () => {
+    if (state.apps.get(app.id) !== registration) return;
+    registration.owners.delete(owner);
+    if (registration.owners.size === 0) state.apps.delete(app.id);
+  };
+}
+function waitForPageApp(document2, appId, mount) {
+  const state = pageAppDocumentState(document2);
+  const waiters = state.waiters.get(appId) ?? /* @__PURE__ */ new Set();
+  waiters.add(mount);
+  state.waiters.set(appId, waiters);
+  return () => {
+    waiters.delete(mount);
+    if (waiters.size === 0) state.waiters.delete(appId);
+  };
+}
+function readPayloadSource(host) {
+  const attribute = host.getAttribute("data-marimo-payload");
+  if (attribute) return host.getAttribute("data-marimo-payload-encoding") === "base64url" ? decodeBase64Url(attribute) : attribute;
+  const template = host.querySelector("template[data-marimo-payload]");
+  const templateAttribute = template?.getAttribute("data-marimo-payload");
+  if (templateAttribute) return templateAttribute;
+  return (template instanceof HTMLTemplateElement ? template.content.textContent : template?.textContent) || void 0;
+}
+function decodeBase64Url(value) {
+  const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
+  const binary = atob(padded);
+  const bytes = Uint8Array.from(binary, (character) => character.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+function pageAppDocumentState(document2) {
+  const owner = document2;
+  return owner[pageAppRegistrySymbol] ??= {
+    apps: /* @__PURE__ */ new Map(),
+    waiters: /* @__PURE__ */ new Map()
+  };
+}
+
+// src/island-element.ts
+var MARIMO_ELEMENT_NAME = "marimo-quarto-island";
+
+// src/browser/index.ts
+defineMarimoIslandElement({
+  name: MARIMO_ELEMENT_NAME,
+  host: "quarto",
+  themeResolver: resolveQuartoTheme
+});
+function resolveQuartoTheme(host) {
+  let element = host;
+  while (element) {
+    if (element.classList.contains("quarto-dark")) return "dark";
+    if (element.classList.contains("quarto-light")) return "light";
+    element = element.parentElement;
+  }
+  return void 0;
+}
+</script>
+
+
+</head>
+
+<body class="nav-sidebar floating quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+      window.dispatchEvent(new Event('resize'));
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../01-grid-approximation/index.html">Foundations</a></li><li class="breadcrumb-item"><a href="../01-grid-approximation/index.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Grid approximation</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Bayesian Biomechanics</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/jobindjohn/bayesian-biomechanics" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Foundations</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../01-grid-approximation/index.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Grid approximation</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../02-first-regression/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">A first regression model</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">References</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Appendices</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../appendix-setup/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">A</span>&nbsp; <span class="chapter-title">Running the lessons locally</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#a-widget-in-the-text" id="toc-a-widget-in-the-text" class="nav-link active" data-scroll-target="#a-widget-in-the-text"><span class="header-section-number">1.1</span> A widget in the text</a></li>
+  <li><a href="#the-lesson" id="toc-the-lesson" class="nav-link" data-scroll-target="#the-lesson"><span class="header-section-number">1.2</span> The lesson</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/jobindjohn/bayesian-biomechanics/edit/main/01-grid-approximation/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/jobindjohn/bayesian-biomechanics/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/jobindjohn/bayesian-biomechanics/blob/main/01-grid-approximation/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../01-grid-approximation/index.html">Foundations</a></li><li class="breadcrumb-item"><a href="../01-grid-approximation/index.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Grid approximation</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span id="sec-grid" class="quarto-section-identifier"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Grid approximation</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Placeholder chapter. It exists to prove the in-browser (WebAssembly) lesson pipeline and will be replaced with real content.</p>
+</div>
+</div>
+<section id="a-widget-in-the-text" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="a-widget-in-the-text"><span class="header-section-number">1.1</span> A widget in the text</h2>
+<p>This small widget runs in your browser as part of the page. Move the slider to see how the number of grid points changes the approximation of a normal distribution.</p>
+<marimo-quarto-island data-marimo-payload="eyJwcm90b2NvbFZlcnNpb24iOjIsImFwcCI6eyJpZCI6Im1hcmltby1hMDM0MmUzZDU3MGYiLCJydW50aW1lQ2VsbENvdW50IjoyLCJhc3NldHMiOnsibW9kdWxlU2NyaXB0cyI6WyJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvbnBtL0BtYXJpbW8tdGVhbS9pc2xhbmRzQDAuMjUuMS9kaXN0L21haW4uanMiXSwibGlua3MiOlt7ImhyZWYiOiJodHRwczovL2Nkbi5qc2RlbGl2ci5uZXQvbnBtL0BtYXJpbW8tdGVhbS9pc2xhbmRzQDAuMjUuMS9kaXN0L3N0eWxlLmNzcyIsInJlbCI6InN0eWxlc2hlZXQiLCJ0aXRsZSI6Im1hcmltby1pc2xhbmRzIiwiY3Jvc3NvcmlnaW4iOiJhbm9ueW1vdXMifSx7InJlbCI6InByZWNvbm5lY3QiLCJocmVmIjoiaHR0cHM6Ly9mb250cy5nb29nbGVhcGlzLmNvbSJ9LHsicmVsIjoicHJlY29ubmVjdCIsImhyZWYiOiJodHRwczovL2ZvbnRzLmdzdGF0aWMuY29tIiwiY3Jvc3NvcmlnaW4iOiIifSx7ImhyZWYiOiJodHRwczovL2ZvbnRzLmdvb2dsZWFwaXMuY29tL2NzczI_ZmFtaWx5PUZpcmErTW9ubzp3Z2h0QDQwMDs1MDA7NzAwJmZhbWlseT1Mb3JhJmZhbWlseT1QVCtTYW5zOndnaHRANDAwOzcwMCZkaXNwbGF5PXN3YXAiLCJyZWwiOiJzdHlsZXNoZWV0In0seyJyZWwiOiJzdHlsZXNoZWV0IiwiaHJlZiI6Imh0dHBzOi8vY2RuLmpzZGVsaXZyLm5ldC9ucG0va2F0ZXhAMC4xOC41L2Rpc3Qva2F0ZXgubWluLmNzcyIsImludGVncml0eSI6InNoYTM4NC0yZE5pL202SnRTaXZpem5yT0laNWZUaVo1QXMwSW4yUXdrdVhTZ29xY1F0Q05wbHZKQWJ0K2p2ZWVOKzhlbjczIiwiY3Jvc3NvcmlnaW4iOiJhbm9ueW1vdXMifV0sImhlYWRUYWdzIjpbeyJ0YWciOiJtYXJpbW8tZmlsZW5hbWUiLCJhdHRycyI6eyJoaWRkZW4iOiIifSwidGV4dCI6IjAxLWdyaWQtYXBwcm94aW1hdGlvbiU1Q2luZGV4LnFtZCJ9XSwidmVyc2lvbiI6IjAuMjUuMSJ9LCJub3RlYm9va0NvZGUiOiJpbXBvcnQgbWFyaW1vXG5cbl9fZ2VuZXJhdGVkX3dpdGggPSBcIjAuMjUuMVwiXG5hcHAgPSBtYXJpbW8uQXBwKClcblxuXG5AYXBwLmNlbGxcbmRlZiBfKCk6XG4gICAgaW1wb3J0IG1hcmltbyBhcyBtb1xuICAgIGltcG9ydCBtYXRwbG90bGliLnB5cGxvdCBhcyBwbHRcbiAgICBpbXBvcnQgbnVtcHkgYXMgbnBcblxuICAgIHBvaW50cyA9IG1vLnVpLnNsaWRlcigzLCA2MCwgdmFsdWU9OCwgbGFiZWw9XCJHcmlkIHBvaW50c1wiKVxuICAgIHBvaW50c1xuICAgIHJldHVybiBucCwgcGx0LCBwb2ludHNcblxuXG5AYXBwLmNlbGxcbmRlZiBfKG5wLCBwbHQsIHBvaW50cyk6XG4gICAgZ3JpZCA9IG5wLmxpbnNwYWNlKC00LCA0LCBwb2ludHMudmFsdWUpXG4gICAgZGVuc2l0eSA9IG5wLmV4cCgtMC41ICogZ3JpZCoqMilcbiAgICBkZW5zaXR5IC89IGRlbnNpdHkuc3VtKClcblxuICAgIGZpZywgYXggPSBwbHQuc3VicGxvdHMoZmlnc2l6ZT0oNiwgMi41KSlcbiAgICBheC52bGluZXMoZ3JpZCwgMCwgZGVuc2l0eSwgY29sb3I9XCIjMGY2ZTc0XCIsIGxpbmV3aWR0aD0yKVxuICAgIGF4LnNldF95dGlja3MoW10pXG4gICAgYXguc3BpbmVzW1tcImxlZnRcIiwgXCJ0b3BcIiwgXCJyaWdodFwiXV0uc2V0X3Zpc2libGUoRmFsc2UpXG4gICAgZmlnLnRpZ2h0X2xheW91dCgpXG4gICAgYXhcbiAgICByZXR1cm5cblxuXG5pZiBfX25hbWVfXyA9PSBcIl9fbWFpbl9fXCI6XG4gICAgYXBwLnJ1bigpIn0sImNlbGwiOnsiaW5kZXgiOjAsImh0bWwiOiI8bWFyaW1vLWlzbGFuZFxuICAgIGRhdGEtYXBwLWlkPVwibWFyaW1vLWEwMzQyZTNkNTcwZlwiXG4gICAgZGF0YS1jZWxsLWlkPVwiSGJvbFwiXG4gICAgZGF0YS1yZWFjdGl2ZT1cInRydWVcIlxuPlxuICAgIDxtYXJpbW8tY2VsbC1vdXRwdXQ-XG4gICAgPG1hcmltby11aS1lbGVtZW50IG9iamVjdC1pZD0nSGJvbC0wJyByYW5kb20taWQ9J2ZjOTg5ODIxLWFiYjMtNWQyYS1hYjQ2LTE1YzYyM2QyZmZkOCc-PG1hcmltby1zbGlkZXIgZGF0YS1pbml0aWFsLXZhbHVlPSc4JyBkYXRhLWxhYmVsPScmcXVvdDsmIzkyO3UwMDNjc3BhbiBjbGFzcz0mIzkyOyZxdW90O21hcmtkb3duIHByb3NlIGRhcms6cHJvc2UtaW52ZXJ0IGNvbnRlbnRzJiM5MjsmcXVvdDsmIzkyO3UwMDNlJiM5Mjt1MDAzY3NwYW4gY2xhc3M9JiM5MjsmcXVvdDtwYXJhZ3JhcGgmIzkyOyZxdW90OyYjOTI7dTAwM2VHcmlkIHBvaW50cyYjOTI7dTAwM2Mvc3BhbiYjOTI7dTAwM2UmIzkyO3UwMDNjL3NwYW4mIzkyO3UwMDNlJnF1b3Q7JyBkYXRhLXN0YXJ0PSczJyBkYXRhLXN0b3A9JzYwJyBkYXRhLXN0ZXBzPSdbXScgZGF0YS1kZWJvdW5jZT0nZmFsc2UnIGRhdGEtZGlzYWJsZWQ9J2ZhbHNlJyBkYXRhLW9yaWVudGF0aW9uPScmcXVvdDtob3Jpem9udGFsJnF1b3Q7JyBkYXRhLXNob3ctdmFsdWU9J2ZhbHNlJyBkYXRhLWluY2x1ZGUtaW5wdXQ9J2ZhbHNlJyBkYXRhLWZ1bGwtd2lkdGg9J2ZhbHNlJz48L21hcmltby1zbGlkZXI-PC9tYXJpbW8tdWktZWxlbWVudD5cbiAgICA8L21hcmltby1jZWxsLW91dHB1dD5cbiAgICA8bWFyaW1vLWNlbGwtY29kZSBoaWRkZW4-aW1wb3J0JTIwbWFyaW1vJTIwYXMlMjBtbyUwQWltcG9ydCUyMG1hdHBsb3RsaWIucHlwbG90JTIwYXMlMjBwbHQlMEFpbXBvcnQlMjBudW1weSUyMGFzJTIwbnAlMEElMEFwb2ludHMlMjAlM0QlMjBtby51aS5zbGlkZXIoMyUyQyUyMDYwJTJDJTIwdmFsdWUlM0Q4JTJDJTIwbGFiZWwlM0QlMjJHcmlkJTIwcG9pbnRzJTIyKSUwQXBvaW50czwvbWFyaW1vLWNlbGwtY29kZT5cbjwvbWFyaW1vLWlzbGFuZD4iLCJvcHRpb25zIjp7Imxhbmd1YWdlIjoicHl0aG9uIiwicmVuZGVyIjp7InNvdXJjZSI6ZmFsc2UsIm91dHB1dCI6dHJ1ZSwiaW5jbHVkZSI6dHJ1ZSwiZWRpdG9yIjpmYWxzZSwiZXJyb3IiOnRydWUsInNlcnZlck91dHB1dCI6dHJ1ZX0sImV4ZWN1dGlvbiI6eyJlbmFibGVkIjp0cnVlfSwibWFyaW1vIjp7ImRpc2FibGVkIjpmYWxzZSwidW5wYXJzYWJsZSI6ZmFsc2V9fX19" data-marimo-payload-encoding="base64url" data-marimo-theme-mode="auto"></marimo-quarto-island>
+<marimo-quarto-island data-marimo-payload="eyJwcm90b2NvbFZlcnNpb24iOjIsImFwcElkIjoibWFyaW1vLWEwMzQyZTNkNTcwZiIsImNlbGwiOnsiaW5kZXgiOjEsImh0bWwiOiI8bWFyaW1vLWlzbGFuZFxuICAgIGRhdGEtYXBwLWlkPVwibWFyaW1vLWEwMzQyZTNkNTcwZlwiXG4gICAgZGF0YS1jZWxsLWlkPVwiTUpVZVwiXG4gICAgZGF0YS1yZWFjdGl2ZT1cInRydWVcIlxuPlxuICAgIDxtYXJpbW8tY2VsbC1vdXRwdXQ-XG4gICAgPG1hcmltby1taW1lLXJlbmRlcmVyIGRhdGEtbWltZT0nJnF1b3Q7YXBwbGljYXRpb24vdm5kLm1hcmltbyttaW1lYnVuZGxlJnF1b3Q7JyBkYXRhLWRhdGE9JyZxdW90O3smIzkyOyZxdW90O2ltYWdlL3BuZyYjOTI7JnF1b3Q7OiAmIzkyOyZxdW90O2RhdGE6aW1hZ2UvcG5nO2Jhc2U2NCxpVkJPUncwS0dnb0FBQUFOU1VoRVVnQUFCSndBQUFIZ0NBWUFBQURnOW5mQkFBQUFPblJGV0hSVGIyWjBkMkZ5WlFCTllYUndiRzkwYkdsaUlIWmxjbk5wYjI0ekxqRXhMaklzSUdoMGRIQnpPaTh2YldGMGNHeHZkR3hwWWk1dmNtY3ZnSTN1QUFBQUFBbHdTRmx6QUFBZXdnQUFIc0lCYnRCMVBnQUFIVUZKUkVGVWVKenQzUXV3VldYWndQRVhBaS9scUVnQ3BpaE9XcHBsU3VJbFRjeUdsTEEwclZHejBxTHJwRGFVWmlXbUdZZ2xqbzNVS0puVm1OMjlkQmt2aFpPVlJDb3FoV2FLV2dvb1dCcWhRVm5BL3VaWjM3ZjNkeEFPSU9jNVp4L1crZjFtR0RmbmJIYXJzL2ZaZTYzL2V0Zjc5bXMwR28wQ0FBQUFBRW42WnowUUFBQUFBQWhPQUFBQUFLUXp3Z2tBQUFDQVZJSVRBQUFBQUtrRUp3QUFBQUJTQ1U0QUFBQUFwQktjQUFBQUFFZ2xPQUVBQUFDUVNuQUNBQUFBSUpYZ0JBQUFBRUFxd1FrQUFBQ0FWSUlUQUFBQUFLa0VKd0FBQUFCU0NVNEFBQUFBcEJLY0FBQUFBRWdsT0FFQUFBQ1FTbkFDQUFBQUlKWGdCQUFBQUVBcXdRa0FBQUNBVklJVEFBQUFBS2tFSndBQUFBQlNDVTRBQUFBQXBCS2NBQUFBQUVnbE9BRUFBQUNRU25BQ0FBQUFJSlhnQkFBQUFFQXF3UWtBQUFDQVZJSVRBQUFBQUtrRUp3QUFBQUJTQ1U0QUFBQUFwQktjQUFBQUFFZ2xPQUVBQUFDUVNuQUNBQUFBSUpYZ0JBQUFBRUFxd1FrQUFBQ0FWSUlUQUFBQUFLa0VKd0FBQUFCU0RjaDlPQUJnVXpIbWttbGw5cVB6Vi92YXFCRTdseGtUVG12Yk5ySHA4bm9DQURveXdna0FBQUNBVklJVEFBQUFBS2tFSndBQUFBQlNDVTRBQUFBQXBCS2NBQUFBQUVnbE9BRUFBQUNRU25BQ0FBQUFJSlhnQkFBQUFFQXF3UWtBQUFDQVZJSVRBQUFBQUtrRUp3QUFBQUJTQ1U0QUFBQUFwQktjQUFBQUFFZ2xPQUVBQUFDUVNuQUNBQUFBSUpYZ0JBQUFBRUFxd1FrQUFBQ0FWSUlUQUFBQUFLa0VKd0FBQUFCU0NVNEFBQUFBcEJLY0FBQUFBRWdsT0FFQUFBQ1FTbkFDQUFBQUlKWGdCQUFBQUVBcXdRa0FBQUNBVklJVEFBQUFBS2tFSndBQUFBQlNDVTRBQUFBQXBCS2NBQUFBQUVnbE9BRUFBQUNRU25BQ0FBQUFJSlhnQkFBQUFFQXF3UWtBQUFDQVZJSVRBQUFBQUtrRUp3QUFBQUJTQ1U0QUFBQUFwQktjQUFBQUFFZ2xPQUVBQUFDUVNuQUNBQUFBSUpYZ0JBQUFBRUFxd1FrQUFBQ0FWSUlUQUFBQUFLa0VKd0FBQUFCU0NVNEFBQUFBcEJLY0FBQUFBRWdsT0FFQUFBQ1FTbkFDQUFBQUlKWGdCQUFBQUVBcXdRa0FBQUNBVklJVEFBQUFBS2tFSndBQUFBQlNDVTRBQUFBQXBCS2NBQUFBQUVnbE9BRUFBQUNRU25BQ0FBQUFJSlhnQkFBQUFFQXF3UWtBQUFDQVZJSVRBQUFBQUtrRUp3QUFBQUJTQ1U0QUFBQUFwQktjQUFBQUFFZ2xPQUVBQUFDUVNuQUNBQUFBSUpYZ0JBQUFBRUFxd1FrQUFBQ0FWSUlUQUFBQUFLa0VKd0FBQUFCU0NVNEFBQUFBcEJLY0FBQUFBRWdsT0FFQUFBQ1FTbkFDQUFBQUlKWGdCQUFBQUVBcXdRa0FBQUNBVklJVEFBQUFBS2tFSndBQUFBQlNDVTRBQUFBQXBCS2NBQUFBQUVnbE9BRUFBQUNRU25BQ0FBQUFRSEFDQUFBQW9QY3l3Z2tBQUFDQVZJSVRBQUFBQUtrRUp3QUFBQUJTQ1U0QUFBQUFwQktjQUFBQUFFZ2xPQUVBQUFDUVNuQUNBQUFBSUpYZ0JBQUFBRUFxd1FrQUFBQ0FWSUlUQUFBQUFLa0VKd0FBQUFCU0NVNEFBQUFBcEJLY0FBQUFBRWdsT0FFQUFBQ1FTbkFDQUFBQUlKWGdCQUFBQUVBcXdRa0FBQUNBVklJVEFBQUFBS2tFSndBQUFBQlNDVTRBQUFBQXBCS2NBQUFBQUVnbE9BRUFBQUNRU25BQ0FBQUFJSlhnQkFBQUFFQXF3UWtBQUFDQVZJSVRBQUFBQUtrRUp3QUFBQUJTQ1U0QUFBQUFwQktjQUFBQUFFZ2xPQUVBQUFDUVNuQUNBQUFBSUpYZ0JBQUFBRUFxd1FrQUFBQ0FWSUlUQUFBQUFLa0VKd0FBQUFCU0NVNEFBQUFBcEJLY0FBQUFBRWdsT0FFQUFBQ1FTbkFDQUFBQUlKWGdCQUFBQUVBcXdRa0FBQUNBVklJVEFBQUFBS2tFSndBQUFBQlNDVTRBQUFBQXBCS2NBQUFBQUVnbE9BRUFBQUNRU25BQ0FBQUFJSlhnQkFBQUFFQXF3UWtBQUFDQVZJSVRBQUFBQUtrRUp3QUFBQUJTQ1U0QUFBQUFwQktjQUFBQUFFZ2xPQUVBQUFDUVNuQUNBQUFBSUpYZ0JBQUFBRUFxd1FrQUFBQ0FWSUlUQUFBQUFLa0VKd0FBQUFCU0NVNEFBQUFBcEJLY0FBQUFBRWdsT0FFQUFBQ1FTbkFDQUFBQUlKWGdCQUFBQUVBcXdRa0FBQUNBVklJVEFBQUFBS2tFSndBQUFBQlNDVTRBQUFBQXBCS2NBQUFBQUVnbE9BRUFBQUNRU25BQ0FBQUFJSlhnQkFBQUFFQXF3UWtBQUFDQVZJSVRBQUFBQUtrRUp3QUFBQUJTQ1U0QUFBQUFwQktjQUFBQUFFZ2xPQUVBQUFDUVNuQUNBQUFBSUpYZ0JBQUFBRUFxd1FrQUFBQ0FWSUlUQUFBQUFLa0VKd0FBQUFCU0NVNEFBQUFBcEJLY0FBQUFBRWdsT0FFQUFBQ1FTbkFDQUFBQUlKWGdCQUFBQUVBcXdRa0FBQUNBVklJVEFBQUFBS2tFSndBQUFBQlNDVTRBQUFBQXBCS2NBQUFBQUVnbE9BRUFBQUNRU25BQ0FBQUFJSlhnQkFBQUFFQXF3UWtBQUFDQVZJSVRBQUFBQUtrRUp3QUFBQUJTQ1U0QUFBQUFwQktjQUFBQUFFZ2xPQUVBQUFDUVNuQUNBQUFBSUpYZ0JBQUFBRUFxd1FrQUFBQ0FWSUlUQUFBQUFLa0VKd0FBQUFCU0NVNEFBQUFBcEJLY0FBQUFBRWdsT0FFQUFBQ1FTbkFDQUFBQUlKWGdCQUFBQUVBcXdRa0FBQUNBVklJVEFBQUFBS2tFSndBQUFBQlNDVTRBQUFBQXBCS2NBQUFBQUJDY0FBQUFBT2k5akhBQ0FBQUFJSlhnQkFBQUFFQXF3UWtBQUFDQVZJSVRBQUFBQUtrRUp3QUFBQUJTQ1U0QUFBQUFwQktjQUFBQUFFZ2xPQUVBQUFDUVNuQUNBQUFBSUpYZ0JBQUFBRUFxd1FrQUFBQ0FWSUlUQUFBQUFLa0VKd0FBQUFCU0NVNEFBQUFBcEJLY0FBQUFBRWdsT0FFQUFBQ1FTbkFDQUFBQUlKWGdCQUFBQUVBcXdRa0FBQUNBVklJVEFBQUFBS2tFSndBQUFBQlNDVTRBQUFBQXBCS2NBQUFBQUVnbE9BRUFBQUNRU25BQ0FBQUFJSlhnQkFBQUFFQXF3UWtBQUFDQVZJSVRBQUFBQUtrRUp3QUFBQUJTQ1U0QUFBQUFwQktjQUFBQUFFZ2xPQUVBQUFDUVNuQUNBQUFBSUpYZ0JBQUFBRUFxd1FrQUFBQ0FWSUlUQUFBQUFLa0VKd0FBQUFCU0NVNEFBQUFBcEJLY0FBQUFBRWdsT0FFQUFBQ1FTbkFDQUFBQUlKWGdCQUFBQUVBcXdRa0FBQUNBVklJVEFBQUFBS2tFSndBQUFBQlNDVTRBQUFBQXBCS2NBQUFBQUVnbE9BRUFBQUNRU25BQ0FBQUFJSlhnQkFBQUFFQXF3UWtBQUFDQVZJSVRBQUFBQUtrRUp3QUFBQUJTQ1U0QUFBQUFwQktjQUFBQUFFZ2xPQUVBQUFDUVNuQUNBQUFBSUpYZ0JBQUFBRUFxd1FrQUFBQ0FWSUlUQUFBQUFLa0VKd0FBQUFCU0RjaDlPQUM2MDVoTHBwWFpqODVmN1d1alJ1eGNaa3c0elE4ZWdOcndlUWV3NlRQQ0NRQUFBSUJVZ2hNQUFBQUFxUVFuQUFBQUFGSUpUZ0FBQUFDa0Vwd0FBQUFBU0NVNEFRQUFBSkJLY0FJQUFBQWdsZUFFQUFBQVFDckJDUUFBQUlCVWdoTUFBQUFBcVFRbkFBQUFBRklKVGdBQUFBQ2tFcHdBQUFBQVNDVTRBUUFBQUpCS2NBSUFBQUFnbGVBRUFBQUFRQ3JCQ1FBQUFJQlVnaE1BQUFBQXFRUW5BQUFBQUZJSlRnQUFBQUNrRXB3QUFBQUFTQ1U0QVFBQUFKQktjQUlBQUFBZ2xlQUVBQUFBUUNyQkNRQUFBSUJVZ2hNQUFBQUFxUVFuQUFBQUFGSUpUZ0FBQUFDa0Vwd0FBQUFBU0NVNEFRQUFBSkJLY0FJQUFBQWdsZUFFQUFBQVFDckJDUUFBQUlCVWdoTUFBQUFBcVFRbkFBQUFBRklKVGdBQUFBQ2tFcHdBQUFBQVNDVTRBUUFBQUpCS2NBSUFBQUFnbGVBRUFBQUFRQ3JCQ1FBQUFJQlVnaE1BQUFBQXFRUW5BQUFBQUZJSlRnQUFBQUNrRXB3QUFBQUFTQ1U0QVFBQUFKQktjQUlBQUFBZ2xlQUVBQUFBUUNyQkNRQUFBSUJVZ2hNQUFBQUFxUVFuQUFBQUFGSUpUZ0FBQUFDa0Vwd0FBQUFBU0NVNEFRQUFBSkJLY0FJQUFBQkFjQUlBQUFDZzl6TENDUUFBQUlCVWdoTUFBQUFBcVFRbkFBQUFBRklKVGdBQUFBQ2tFcHdBQUFBQVNDVTRBUUFBQUpCS2NBSUFBQUFnbGVBRUFBQUFRQ3JCQ1FBQUFJQlVnaE1BQUFBQXFRUW5BQUFBQUZJSlRnQUFBQUNrRXB3QUFBQUFTQ1U0QVFBQUFKQktjQUlBQUFBZ2xlQUVBQUFBUUNyQkNRQUFBSUJVZ2hNQUFBQUFxUVFuQUFBQUFGSUpUZ0FBQUFDa0Vwd0FBQUFBU0NVNEFRQUFBSkJLY0FJQUFBQWdsZUFFQUFBQVFDckJDUUFBQUlCVWdoTUFBQUFBcVFRbkFBQUFBRklKVGdBQUFBQ2tFcHdBQUFBQVNDVTRBUUFBQUpCS2NBSUFBQUFnbGVBRUFBQUFRQ3JCQ1FBQUFJQlVBM0lmRG5pK01aZE1LN01mbmIvYTEwYU4yTG5NbUhDYUh4WUFBSFF6KytQUUhrWTRBUUFBQUpCS2NBSUFBQUFnbGVBRUFBQUFRQ3JCQ1FBQUFJQlVnaE1BQUFBQXFRUW5BQUFBQUZMMWF6UWFqZHlIQkFBQUFLQXZNOElKQUFBQWdGU0NFd0FBQUFDcEJDY0FBQUFBVWdsT0FBQUFBS1FTbkFBQUFBQklKVGdCQUFBQWtFcHdBZ0FBQUNDVjRBUUFBQUJBS3NFSkFBQUFnRlNDRXdBQUFBQ3BCQ2NBQUFBQVVnbE9BQUFBQUtRU25BQUFBQUJJSlRnQkFBQUFrRXB3QWdBQUFDRFZnS3dIV3JGaVJWbThlSEhXd3dFQUFBRFFnNFlORzFZR0RCalF1NEpUeEtiaHc0ZG5QUndBQUFBQVBXakJnZ1ZscDUxMlNua3NsOVFCQUFBQWtLcGZvOUZvWkR4UTNTNnBXN1JvVWRsLy8vMnIyM2ZlZVdmWllZY2QycjFKOURDdkFid084QnJBWndMMkRmQWF3SEVDZmVrMU1LdzNYbElYRzVRMTdLcTNpUmRQWGYrL3NXRzhCdkE2d0dzQW53bllOOEJyQU1jSmVBMXNPSmZVQVFBQUFKQktjQUlBQUFBZ2xlQUVBQUFBUUNyQkNRQUFBSUJVZ2hNQUFBQUFxUVFuQUFBQUFGSUpUZ0FBQUFDazZ0ZG9OQnE1RHdrQUFBQkFYMmFFRXdBQUFBQ3BCQ2NBQUFBQVVnbE9BQUFBQUtRU25BQUFBQUJJSlRnQkFBQUFrRXB3QWdBQUFDQ1Y0QVFBQUFCQUtzRUpBQUFBZ0ZTQ0V3QUFBQUNwQnVRK1hOKzJkT25TOHRHUGZyVDg1ei8vcWY1KzZLR0hsdE5QUDczZG0wVTNldkRCQjh0dHQ5MVdIbnZzc2JKNDhlS3liTm15c3UyMjI1WTk5OXl6dlBuTmJ5NnZmT1VyL2Z4cjdpOS8rVXVaT1hObStmT2YvMXk5QnVKOVlPdXR0MjY5QnVLLzFOL0tsU3ZML2ZmZlgrNjY2NjR5ZS9iczh0ZS8vclg2K2tFSEhWUSsrY2xQdG52ejZJSkdvMUg5anQ5ODg4MWw0Y0tGWmVEQWdXWFhYWGN0Ung5OWRIbjFxMS90WjlzSHhQdjYzWGZmWGYxdXo1MDd0enozM0hQVjE4ODk5OXp5bXRlOHB0MmJSdys4djgrWk02ZmNjY2NkNWZISEg2OCs2Mk5mZi92dHR5Lzc3cnR2T2Vxb284cDIyMjNuZWVnRHI0Tjc3cm1uM0g3NzdkWHJZTkdpUldYVnFsWGxwUzk5YWZVK01HN2N1REowNk5CMmJ5WnRFTWVCWjV4eFJyVy9FTjd4am5lVUUwNDR3WFB4ZndTblJCR1h2dmU5NzdYK3ZzVVdXMlErUEwxSUhIaU1IeisrUFBIRUUrdTgzNUZISGxrdXYvenlzc3N1dS9UWXR0RXpicnp4eHZMaEQzKzRPZ0JkbDdGangxYXZnWjEzM3RsVFUxT0hIMzU0ZFNDeWZQbnlkbThLeVI1NTVKSHkzdmUrdDh5YU5XdU43MDJjT0xHY2VPS0o1YkxMTGl2YmJMT05uMzBOM1hMTExlVmpIL3RZZWVpaGgxb0hFaDE5NUNNZkVaeHE3c3d6ejZ3K3cvLzV6MzkyZXAvWTM1OHdZVUk1Nzd6enltYWJiZGFqMjBmUG1EcDFhcGswYVZJVm56dnpvaGU5cUh6d2d4OHNGMTk4Y1hueGkxL3NxZWtqNHJQaGxGTk9LYi82MWE5YVg5dGpqejNhdWsyOWplQ1U1Q2MvK1VtNTZxcXJ5cFpiYmxuKzlhOS9aVDBzdlZSRWhpZWZmTExzdDk5K1pkU29VV1g0OE9IbFpTOTdXWFhHYS83OCtlWDczLzkrZWZqaGg2c3dGU01jNHN6b0RqdnMwTzdOSmxFOHo4M1l0T09PTzFaeGNlVElrV1hRb0VGVmlMem1tbXVxczJBMzNYUlRlZjNyWDErTmtCZ3hZb1Rub0lZaVJxeFlzYUxzdGRkZTFmdkJxMTcxcXZLcFQzMnEzWnRGRjhVWjdEZSs4WTFsd1lJRjFZSEV1OS85N2pKNjlPanFmZjc2NjY4dlAvLzV6NnVUVEhHL1gvemlGMlh6elRmM002K1plSStmTjI5ZU5XcjFkYTk3WGZXWkg2TlpyNzMyMm5adkdqM2szbnZ2YmNXbStJeVBrY3U3N2JaYkZabisrTWMvbG05OTYxdlZTSmNwVTZhVSsrNjdyL3o0eHo4dS9mdWJzYVJ1SG5qZ2dlcTkvN0RERHF0R3RjVStmK3pYLytNZi82aUM5TlZYWDEyZWZ2cnBLazdHNitEV1cyOHRBd1k0ek80TExyMzAwaW8yYVFEcjBLREwvdmEzdnpXR0RCa1NwNzRhWC9yU2w2ci94cCtUVGpySlQ3ZW1GaTVjMkhqcXFhYzYvZjdLbFNzYlo1MTFWdXUxTUg3OCtCN2RQcnJmWlpkZDF0aDc3NzBiMTE1N2JXUEZpaFZydmM5NTU1M1hlZzJNSFR2VzAxSlRzMmJOYWl4YnRxejE5eVZMbHJTZTkrT09PNjZ0MjhiR08rYVlZNnJuc0YrL2ZvM3JyNzkramUrZmM4NDVyZWQ1OHVUSmZ0UTEvYXgvNElFSEdxdFdyV3A5YmNxVUthM25mY2FNR1czZFBycGZmSFlmZi96eGpUbHo1cXoxKzB1WExtMk1IajI2OVpxWVBuMjZwNldHNXMyYjExaStmSG1uMzQ5OWdDT09PS0wxT3JqaWlpdDZkUHRvai9oODJITExMUnY5Ky9kdlhIamhoYTNuLyt5enovYVVkQ0RCSjRnaDFURmZ4OXZlOXJacWVEMzFGeU5hQmc4ZTNPbjM0K3hXREwxdFh0TWZ3L0twbDJPUFBiYWEweUgrRzZNZjFpYm05NGdSTHlGR3U4VlpVT29uUmpFYVBsOHZmL2pESDZxUkN1RTk3M2xQT2VhWVk5YTRUMXcrMDV6RDZZdGYvS0xSelRYOXJJKzVHUHYxNjlmdVRhRk52dkdOYjFTajF2ZlpaNSsxZmo5R3YzMzcyOTl1aldxSysxTS91KysrZXpXQ3BUT3hEM0RKSlplMC9tNi92Mi9NNlJXWDNNZVZUYWVlZW1vNStPQ0QyNzFKdlpiZzFFWGYrYzUzcXFIVk1WRjB6T01BVFRHVU5vYmNocmpjaG5vWk1tVElCZzJiaitIM3pXdTgvL1NuUC9YQWxnRmRGUWVZVFRGWDI5ckU3LytIUHZTaDZ2WXp6enhUWFQ0TDFNdXdZY1BXZTUrWVZxRzVRRWdzSGtIZjFIR3VUdnY5OVhmaGhSZVdPKys4czFwRTVJSUxMbWozNXZScWdsTVh4THdOcDUxMlduVTdKb2hyeGdVSWYvLzczNnQ1bkVKemxBdDlUM1BWeXJDMlNXZUIzaWZtM3dndmVjbEx5djc3NzkvcC9kNzBwamUxYnYveWw3L3NrVzBEZXU5bnZjLzV2aXZpUTVQOS92cVBndjc4NXo5ZjNiN2lpaXVxZlFVNkp6aDFRYXhTdG1USmtqSm16Smp5L3ZlL3Z5c1BSUTBuRjR3bE1mLzk3MzlYUTNDLzhJVXZ0SHVUYUpQbXNPcTRKS041QmhUb3ZlS0FNU1lERHE5NHhTdldPZkZyZkw5NVNXM3ozd0I5eTZPUFB0bzZ3UmlMUnREMy9Qclh2NjZPQzBNc0VCT3JXMUxmdUJ5WDJ2LzN2Lzh0SC9qQUIxWTc4Y1RhbVQ1L0kwMmZQcjFhb1NhSzV0ZSs5cldOZlJocUlDNnBqSldLUXF4a0Vpc2F4YVZUY2RCeXdBRUhWSytWNWp3ZjlDMnhrbFhNOHhSaXRTdWpJS0gzaTFXSG1xdFM3YlRUVHV1OGI4U291T1FtUmp6SGV6L1E5M3p1YzU5cmpXeUsxU3lwLzZWVWQ5MTFWK3RxaGxpNThySEhIcXMrRDJKZXo1aGlaYXV0dG1yM1p0Sk5ZbjdXV0wweTV2aWJPbldxbi9NR0VKdzJRcnl4bkhIR0dhMDNIVXVkOTIwUmw5YTJSSExFcHRnSjJYdnZ2ZHV5WGJUWC9Qbnpxd1VGd3NDQkE4dEZGMTNrS1lGTndMUFBQdHU2dlNIRDVKc0hGaDMvSGRCMzVudUxTY1BESG52czBlbWNiOVRIekprenl3MDMzTERHMTQ4NzdyaHk1cGxuVm5OOFVrKy8rOTN2V3Z2emwxOStlZGxtbTIzYXZVbWJoTm9HcDhtVEo3ZEdGbXlzbUFUcytRZUpxMWF0S3FlY2NrcDE5dk9RUXc0eFpMSVhpN1BORXlaTTZQTGpmUHpqSHk5dmVNTWJPdjErWERvWE94a2hWaXFJWWRVUm9PNjQ0NDR5YnR5NGFuV2oyQmx4dHFNOXZ2clZyN2JtWTlsWWd3WU5xcTdSM2xBeGdYQ3NXaG1yVnpaWHNCbzVjbVNYdG9HTkZ5SGdmZTk3WDVkL2hDZWZmSEo1NjF2ZjZxbm9RL091UlN4ZW4rWjlubnZ1dVc3ZExxQjN1ZjMyMjF0VGFzUXFaVC82MFkvS1pwdHQxdTdOb3B0OTVqT2ZxWTRGbS90N01kcmxCei80UWV2UHhJa1R5L25ubjI5MXk1cFp2bng1dFI4WXE5Tzk2MTN2S2tjZGRWUzdOMm1UVWR2Z2ROdHR0MVdYdkhYRmExLzcyalcrRmt0ZXhtTnZzY1VXNWNvcnIvUm0wb3N0WGJwMHJTT1BYcWdJUnVzS1RoR2Jtc0dwNDNMWmt5Wk5xa1k0eGRMYThRYVZzUzI4Y0xObnorN3l6MzdvMEtFdjZBTXBQb1JpUXNFUTEvRm5oRTgyWG9TQWpOKy9Bdzg4VUhEcUF6cU9hb3A1K05ZblRqUUVKeFdnNzVnN2QyNTFVakYrL3lNeVJXd3lmVUxmY1BEQkI2L3h0ZGpuandoMXpUWFhWTGUzM25ycmFyUVQ5WEhXV1dlVmh4NTZxR3kvL2ZibDBrc3ZiZmZtYkZKcUc1eWlMc2RFWGwyeDdiYmJydmIzZUpIRjQ0YVltVDRtQzZWM0wwOGFPd0JkdGE0Vmlqb1RFMFNmYzg0NVpkYXNXZVhtbTI4dTExMTNYVFdSK1BQREZOM3YxRk5QN2ZKWmlBak1HeUoyUEdNRVRFVHBFTzlCMDZaTjY5TC9ObDBYTzM0Wjd3VXVqKzBiT2c2UmovbWMxcWQ1SDBQcm9XKzQ3Nzc3cW9tQ1kvNmVtTGNuTHF0N3kxdmUwdTdOb3MwbktxNjY2cXBxdi8rSko1Nm9SclovNGhPZmFDMHF3YWJ0TjcvNVRYWEZSUGpLVjc1U0JnOGUzTzVOMnFUVU5qakY1VzdaWWdXYU9Oc1pNU0d1NFl4THFUbzcweG5pb0xONW56amdiUTYvcE9jT010ZjJIUFdrdDcvOTdWVndDdkdhRVp4NjNuNzc3VmY5Nlc3eHV4K1gwVFdYUm85THVHSkJnWGkvb0wzaTdITzczd3ZZZE1TbE1USEJmeHcweE9wVDY3SnMyYkx5OU5OUFY3ZDMzMzMzSHRwQ29GM3V2Ly8rS2pZOTlkUlRWV3lLUldOaVh3OWlWZW9qamppaWZQT2IzNncrRitiTm0yZDE0cHE0NTU1N3FvVUI0Z1QwRDMvNHcrclA4elgzQlVLTXFvK0JCczNqZ1hIanhwVytyTGJCcVR2RkN5NHVrOXFRU1lQano0YXNkRU05ZFR6akhjdG5VazhSb284Kyt1aHl5eTIzdEQ1Y3Z2NzFyNHROc0ltS1Mrb2pPRDN5eUNQVjVkbWRqVjZLUzNhYmpJQ0QraThTRXl2T3h2eU1FWnUrKzkzdk9wbkJhdXozMTM5L2YwT21hSWpZMUF4T2gzVERJSmhOamVEMEFpK3RXdDlsR1RHOHRybENSY3o3Yy9ycHAxZTNuZm5zdXpzblRjT0hEMi9ydHRCOUh6NHh6OWVNR1ROV2kwMzkrL2YzSTRkTlZJeEt2dW1tbTZxRlFtNjg4Y1p5NG9rbnJ2VitQL3ZaejFxM1RTZ1A5UlVIajgrUFRlOTg1enZidlZuMDB2MytHTjF1c0VHOTlnblc5M3pHZTBSTXA5SmNzZkNFRTA2b2J1K3p6ejZscnhPY1hvQVlZcisreXpJV0xseTQyaHhDTHVQb3UySm9aVnhTMWJ5MmUvVG8wZTNlSkxwaE11b1lTdDljb0NCV3E0blY3TVFtMkxURmdXUk1FQm9yMGs2ZE9yWDZleHhrZHZUa2swOVdsMDZFdmZiYXE0d2FOYXBOV3d0MHB3Y2ZmTENLVGZFNzM3eU16djQ5YXh2eDJoenBmc0FCQjVUdHR0dk9ENmttZHR0dHQrclB1c3ljT2JOMU82WlE4Ujd4LzV5Q2g0MXc5dGxuVjh2aHh0bnZ0VjF5ZWV1dHQ1WkREejIwTEZxMHFQcGFyRllYODRKUXI2WFQ0d3hHYzQ2dW1DRGN5Q2FvaDFpRjV0T2YvblJyN29ieDQ4ZFhLMUEyeFlIbnNjY2VXNVlzV1ZMOVBhSVVVRCt4WU5EaGh4OWVGaTllWEFZT0hGZ3RlKzlBc20rSlM2dmpQVDdDWTJmN2cxZGZmWFVaTzNac1dibHlaVFc2YWNxVUtUMituZEJiOVd2RTBURnBZb1JUODlLcGswNDZxWG9Eb242YUUwSEh0ZG83N3JoakdUSmtTSFg3MldlZnJTYVhqNE9ScGdrVEpwU0xMNzdZZkQ0MWMvNzU1NWR6enoyM05TbDFETGRkM3dUaEVhV09QUExJSHRwQ2VzcVZWMTVaWFg3VmNiNjJuLzcwcDlYdGVIODQ4TUFEVjd0LzdMaU9HREhDRTlUTHhRbUY0NDgvdmxybU9nd2FOS2k2dEQ0T0xtSWxvaGpoR0NaUG5sdysrOW5QdG5scjZTN3hHb2lEeUtZNDZJeFZ5cHBUSjhUbmYxT3NYbnpCQlJkNE1tcGs1TWlSWmM2Y09hMHJGelprSkdPTWJqZTZwVDdpQlBOQkJ4MVUzUjQ2ZEdnWk5teFk5WHNmSjVKajh2aTVjK2RXKy85aDg4MDNMOU9uVHk4bm4zeHltN2VhbmhZam5PSXpvVGt3WWRLa1NaNkUvK09TT3RnSXNkeHB6Tm56MjkvK3RscXhKUDUwRkI4NEVSWmlTZFFZNlVUOVBQUE1NNjNiY1FCNjNYWFhyZmZmSEhiWVlkMjhWYlJESEl4ME5vbms0NDgvdnNiM0prNmMyRU5iUmxmRXBiRXhtbUhhdEdubG9vc3VxcDdMNXVXenpjdm9JaTdFNnBUVVYveitkZ3hPSGNWcXhCM0ZaVFRVOTdPKzQySkE2L0xsTDM5WmNLcVJ1SlFxVGlyRWZ2L2RkOSs5MmtubHBqZ2hFYVBlNDFMczlWMTZCWDJORVU3ZHNEVDZEVGZjVU4zZVpaZGR6T2xRYzNHR08zWStZcWgxVEJnZlM2TEdtWTg5OTl5ekducE5mZDE3NzcyZERxL3V6TDc3N2x0ZS92S1hkOXMyMFI2Ly8vM3Z5OE1QUDd6Qjl4OHpaa3lucTU3Uk84Vmc4UGlkaitnVWM3anN1dXV1RGlyNmlEaVpzTGJMNTlkbThPREIxVncvMUVkY05oOXp1YjBRc1FSNjdBOVNQekdTYWNHQ0JkV1VHZkc2MkdxcnJhcmp2ZGkzVzk4b2Qrby9kMjlNcVJMaU9EQk9TdkcvQkNjQUFBQUFVcGswSEFBQUFJQlVnaE1BQUFBQXFRUW5BQUFBQUZJSlRnQUFBQUNrRXB3QUFBQUFTQ1U0QVFBQUFKQktjQUlBQUFBZ2xlQUVBQUFBUUNyQkNRQUFBSUJVZ2hNQUFBQUFxUVFuQUFBQUFGSUpUZ0FBQUFDa0Vwd0FBQUFBU0NVNEFRQUFBSkJLY0FJQUFBQWdsZUFFQUFBQVFDckJDUUFBQUlCVWdoTUFBQUFBcVFRbkFBQUFBRklKVGdBQUFBQ2tFcHdBQUFBQVNDVTRBUUFBQUpCS2NBSUFBQUFnbGVBRUFBQUFRQ3JCQ1FBQUFJQ1M2WDhBby9BUDUvWENDcVlBQUFBQVNVVk9SSzVDWUlJPSYjOTI7JnF1b3Q7LCAmIzkyOyZxdW90O19fbWV0YWRhdGFfXyYjOTI7JnF1b3Q7OiB7JiM5MjsmcXVvdDtpbWFnZS9wbmcmIzkyOyZxdW90OzogeyYjOTI7JnF1b3Q7d2lkdGgmIzkyOyZxdW90OzogNTkwLCAmIzkyOyZxdW90O2hlaWdodCYjOTI7JnF1b3Q7OiAyNDB9fX0mcXVvdDsnPjwvbWFyaW1vLW1pbWUtcmVuZGVyZXI-XG4gICAgPC9tYXJpbW8tY2VsbC1vdXRwdXQ-XG4gICAgPG1hcmltby1jZWxsLWNvZGUgaGlkZGVuPmdyaWQlMjAlM0QlMjBucC5saW5zcGFjZSgtNCUyQyUyMDQlMkMlMjBwb2ludHMudmFsdWUpJTBBZGVuc2l0eSUyMCUzRCUyMG5wLmV4cCgtMC41JTIwKiUyMGdyaWQqKjIpJTBBZGVuc2l0eSUyMCUyRiUzRCUyMGRlbnNpdHkuc3VtKCklMEElMEFmaWclMkMlMjBheCUyMCUzRCUyMHBsdC5zdWJwbG90cyhmaWdzaXplJTNEKDYlMkMlMjAyLjUpKSUwQWF4LnZsaW5lcyhncmlkJTJDJTIwMCUyQyUyMGRlbnNpdHklMkMlMjBjb2xvciUzRCUyMiUyMzBmNmU3NCUyMiUyQyUyMGxpbmV3aWR0aCUzRDIpJTBBYXguc2V0X3l0aWNrcyglNUIlNUQpJTBBYXguc3BpbmVzJTVCJTVCJTIybGVmdCUyMiUyQyUyMCUyMnRvcCUyMiUyQyUyMCUyMnJpZ2h0JTIyJTVEJTVELnNldF92aXNpYmxlKEZhbHNlKSUwQWZpZy50aWdodF9sYXlvdXQoKSUwQWF4PC9tYXJpbW8tY2VsbC1jb2RlPlxuPC9tYXJpbW8taXNsYW5kPiIsIm9wdGlvbnMiOnsibGFuZ3VhZ2UiOiJweXRob24iLCJyZW5kZXIiOnsic291cmNlIjpmYWxzZSwib3V0cHV0Ijp0cnVlLCJpbmNsdWRlIjp0cnVlLCJlZGl0b3IiOmZhbHNlLCJlcnJvciI6dHJ1ZSwic2VydmVyT3V0cHV0Ijp0cnVlfSwiZXhlY3V0aW9uIjp7ImVuYWJsZWQiOnRydWV9LCJtYXJpbW8iOnsiZGlzYWJsZWQiOmZhbHNlLCJ1bnBhcnNhYmxlIjpmYWxzZX19fX0" data-marimo-payload-encoding="base64url" data-marimo-theme-mode="auto"></marimo-quarto-island>
+</section>
+<section id="the-lesson" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="the-lesson"><span class="header-section-number">1.2</span> The lesson</h2>
+<figure class="bb-lesson figure">
+<iframe src="grid_approximation/index.html" title="Lesson notebook: grid_approximation.py" loading="lazy" style="width:100%;height:80vh;border:1px solid var(--bs-border-color);border-radius:6px;"></iframe>
+<figcaption class="bb-lesson-links">Runs in your browser · <a href="grid_approximation/index.html" target="_blank" rel="noopener">Open full page</a> · <a href="grid_approximation.py" download="">Download notebook</a> · <a href="https://molab.marimo.io/github/jobindjohn/bayesian-biomechanics/blob/main/01-grid-approximation/grid_approximation.py/wasm" target="_blank" rel="noopener">Open in molab</a></figcaption>
+</figure>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jobindjohn\.github\.io\/bayesian-biomechanics\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../index.html" class="pagination-link" aria-label="Preface">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Preface</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../02-first-regression/index.html" class="pagination-link" aria-label="A first regression model">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">A first regression model</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+      &nbsp;
+    </div>   
+    <div class="nav-footer-center">
+<p>Text and figures licensed under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>; code under the <a href="https://github.com/jobindjohn/bayesian-biomechanics/blob/main/LICENSE">MIT licence</a>.</p>
+<div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/jobindjohn/bayesian-biomechanics/edit/main/01-grid-approximation/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/jobindjohn/bayesian-biomechanics/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li><li><a href="https://github.com/jobindjohn/bayesian-biomechanics/blob/main/01-grid-approximation/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

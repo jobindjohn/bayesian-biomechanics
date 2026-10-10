@@ -1,0 +1,129 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Bayesian Biomechanics",
+    "section": "",
+    "text": "Preface\nBayesian Biomechanics is an interactive introduction to Bayesian data analysis for biomechanics researchers. It assumes no prior experience with Bayesian statistics and only a little Python.",
+    "crumbs": [
+      "Preface"
+    ]
+  },
+  {
+    "objectID": "index.html#how-the-book-works",
+    "href": "index.html#how-the-book-works",
+    "title": "Bayesian Biomechanics",
+    "section": "How the book works",
+    "text": "How the book works\nEach chapter combines prose with interactive marimo notebooks:\n\nIn the browser. Lessons that only need lightweight tools (NumPy, SciPy) run directly in your browser through WebAssembly. Nothing to install.\nOn your computer. Lessons that fit models with PyMC and Bambi run locally. The book shows their pre-computed results, and Appendix A — Running the lessons locally explains how to run them yourself.",
+    "crumbs": [
+      "Preface"
+    ]
+  },
+  {
+    "objectID": "index.html#further-reading",
+    "href": "index.html#further-reading",
+    "title": "Bayesian Biomechanics",
+    "section": "Further reading",
+    "text": "Further reading\nGood general introductions to Bayesian data analysis include McElreath (2020) and Gelman et al. (2013).",
+    "crumbs": [
+      "Preface"
+    ]
+  },
+  {
+    "objectID": "index.html#licence",
+    "href": "index.html#licence",
+    "title": "Bayesian Biomechanics",
+    "section": "Licence",
+    "text": "Licence\nText and figures are licensed under CC BY 4.0. Code and notebooks are licensed under the MIT licence.\n\n\n\n\nGelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A., & Rubin, D. B. (2013). Bayesian data analysis (3rd edn). CRC Press.\n\n\nMcElreath, R. (2020). Statistical rethinking: A Bayesian course with examples in R and Stan (2nd edn). CRC Press.",
+    "crumbs": [
+      "Preface"
+    ]
+  },
+  {
+    "objectID": "01-grid-approximation/index.html",
+    "href": "01-grid-approximation/index.html",
+    "title": "1  Grid approximation",
+    "section": "",
+    "text": "1.1 A widget in the text\nThis small widget runs in your browser as part of the page. Move the slider to see how the number of grid points changes the approximation of a normal distribution.",
+    "crumbs": [
+      "Foundations",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Grid approximation</span>"
+    ]
+  },
+  {
+    "objectID": "01-grid-approximation/index.html#the-lesson",
+    "href": "01-grid-approximation/index.html#the-lesson",
+    "title": "1  Grid approximation",
+    "section": "1.2 The lesson",
+    "text": "1.2 The lesson\n\n\nRuns in your browser · Open full page · Download notebook · Open in molab",
+    "crumbs": [
+      "Foundations",
+      "<span class='chapter-number'>1</span>  <span class='chapter-title'>Grid approximation</span>"
+    ]
+  },
+  {
+    "objectID": "02-first-regression/index.html",
+    "href": "02-first-regression/index.html",
+    "title": "2  A first regression model",
+    "section": "",
+    "text": "2.1 The lesson\nThis lesson fits a model with PyMC, which does not run in the browser. The page shows its pre-computed results; see Appendix A to run it yourself.",
+    "crumbs": [
+      "Foundations",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>A first regression model</span>"
+    ]
+  },
+  {
+    "objectID": "02-first-regression/index.html#the-lesson",
+    "href": "02-first-regression/index.html#the-lesson",
+    "title": "2  A first regression model",
+    "section": "",
+    "text": "Pre-computed results; run it locally to change it · Open full page · Download notebook · Open in molab",
+    "crumbs": [
+      "Foundations",
+      "<span class='chapter-number'>2</span>  <span class='chapter-title'>A first regression model</span>"
+    ]
+  },
+  {
+    "objectID": "references.html",
+    "href": "references.html",
+    "title": "References",
+    "section": "",
+    "text": "Gelman, A., Carlin, J. B., Stern, H. S., Dunson, D. B., Vehtari, A.,\n& Rubin, D. B. (2013). Bayesian data analysis (3rd ed.).\nCRC Press.\n\n\nMcElreath, R. (2020). Statistical rethinking: A\nBayesian course with examples in R and\nStan (2nd ed.). CRC Press.",
+    "crumbs": [
+      "References"
+    ]
+  },
+  {
+    "objectID": "appendix-setup/index.html",
+    "href": "appendix-setup/index.html",
+    "title": "Appendix A — Running the lessons locally",
+    "section": "",
+    "text": "A.1 Option 1: the whole book with pixi (recommended)\nLessons that run in the browser need no setup. For lessons that fit models with PyMC and Bambi, you need Python on your own computer. There are two ways to get it.\npixi installs Python and every package the book uses into a folder inside the project, without touching the rest of your system.\nThe lesson opens in your web browser.",
+    "crumbs": [
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Running the lessons locally</span>"
+    ]
+  },
+  {
+    "objectID": "appendix-setup/index.html#option-1-the-whole-book-with-pixi-recommended",
+    "href": "appendix-setup/index.html#option-1-the-whole-book-with-pixi-recommended",
+    "title": "Appendix A — Running the lessons locally",
+    "section": "",
+    "text": "Install pixi by following the installation instructions for your operating system.\nDownload the book’s code, either with git:\ngit clone https://github.com/jobindjohn/bayesian-biomechanics.git\ncd bayesian-biomechanics\nor by downloading and unzipping the ZIP archive.\nOpen a lesson. The first run downloads and installs everything, which can take a few minutes:\npixi run lesson 02-first-regression/first_regression.py\n\n\n\nA.1.1 Re-fitting the models\nLessons load pre-computed results when they exist, so they open quickly. To fit the models again from scratch and overwrite the saved results:\npixi run refit 02-first-regression/first_regression.py",
+    "crumbs": [
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Running the lessons locally</span>"
+    ]
+  },
+  {
+    "objectID": "appendix-setup/index.html#option-2-a-single-notebook",
+    "href": "appendix-setup/index.html#option-2-a-single-notebook",
+    "title": "Appendix A — Running the lessons locally",
+    "section": "A.2 Option 2: a single notebook",
+    "text": "A.2 Option 2: a single notebook\nEvery notebook lists the packages it needs at the top of the file, so you can run one on its own. Download it with the button on the lesson’s page, install uv, and run:\nuvx marimo edit --sandbox first_regression.py\nuv reads the package list from the notebook and installs it into a private environment for that notebook.",
+    "crumbs": [
+      "Appendices",
+      "<span class='chapter-number'>A</span>  <span class='chapter-title'>Running the lessons locally</span>"
+    ]
+  }
+]
