@@ -1,0 +1,32 @@
+name: Publish
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write # push the rendered site to the gh-pages branch
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: prefix-dev/setup-pixi@d3f436a425481402e6a95a1d1fc10331c708cd9e # v0.10.2
+        with:
+          pixi-version: v0.81.0
+          environments: docs
+          locked: true
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Render and publish to gh-pages
+        run: pixi run -e docs quarto publish gh-pages --no-browser --no-prompt
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

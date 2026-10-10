@@ -60,7 +60,9 @@ quarto = ">=1.9.38,<1.10"
 [feature.docs.tasks]
 render = "quarto render"
 preview = "quarto preview"
-links = "lychee --no-progress --root-dir _site '_site/**/*.html'"
+# Internal links only (fast, for PRs); links-all also checks external links
+links = "lychee --no-progress --offline --root-dir $PIXI_PROJECT_ROOT/_site '_site/**/*.html'"
+links-all = "lychee --no-progress --root-dir $PIXI_PROJECT_ROOT/_site '_site/**/*.html'"
 
 [environments]
 default = { solve-group = "main" }
