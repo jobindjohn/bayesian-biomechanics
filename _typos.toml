@@ -1,5 +1,5 @@
 [files]
-extend-exclude = ["pixi.lock", "LICENSE*", "_freeze/", "_site/", "*.bib"]
+extend-exclude = ["pixi.lock", "LICENSE*", "_freeze/", "_site/", "_extensions/", "*.bib", "*.csl"]
 
 # Prose is British English; code keeps the default locale so that
 # library APIs (e.g. `color=`, `normalize`) are not flagged.

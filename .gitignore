@@ -13,3 +13,5 @@ __marimo__/
 # OS / editors
 .DS_Store
 Thumbs.db
+
+**/*.quarto_ipynb

@@ -1,0 +1,6 @@
+# A first regression model {#sec-first-regression}
+
+::: {.callout-note}
+Placeholder chapter. It exists to prove the local PyMC/Bambi lesson pipeline
+and will be replaced with real content.
+:::

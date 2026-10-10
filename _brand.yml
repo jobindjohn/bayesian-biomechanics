@@ -1,0 +1,53 @@
+# Proposed brand for Bayesian Biomechanics.
+# All text colours meet WCAG AA (>= 4.5:1) against their background in both modes.
+meta:
+  name: Bayesian Biomechanics
+  link:
+    home: https://jobindjohn.github.io/bayesian-biomechanics/
+    github: https://github.com/jobindjohn/bayesian-biomechanics
+
+color:
+  palette:
+    teal: "#0f6e74"
+    teal-light: "#5ec4c9"
+    orange: "#b5480f"
+    orange-light: "#f39a5b"
+    ink: "#1f2328"
+    paper: "#fdfdfc"
+    night: "#15191d"
+    mist: "#e6e8ea"
+  foreground:
+    light: ink
+    dark: mist
+  background:
+    light: paper
+    dark: night
+  primary:
+    light: teal
+    dark: teal-light
+  secondary:
+    light: orange
+    dark: orange-light
+
+typography:
+  # Bunny Fonts is a GDPR-friendly mirror of Google Fonts (no visitor tracking).
+  fonts:
+    - family: Source Sans 3
+      source: bunny
+      weight: [400, 600, 700]
+      style: [normal, italic]
+    - family: Source Serif 4
+      source: bunny
+      weight: [600, 700]
+    - family: JetBrains Mono
+      source: bunny
+      weight: [400, 600]
+  base:
+    family: Source Sans 3
+    line-height: 1.6
+  headings:
+    family: Source Serif 4
+    weight: 600
+  monospace: JetBrains Mono
+  link:
+    color: primary

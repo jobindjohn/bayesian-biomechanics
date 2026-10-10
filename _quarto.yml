@@ -1,0 +1,41 @@
+project:
+  type: book
+  output-dir: _site
+
+book:
+  title: "Bayesian Biomechanics"
+  subtitle: "An interactive introduction to Bayesian data analysis for biomechanics"
+  author: "Jobin John"
+  date: last-modified
+  site-url: https://jobindjohn.github.io/bayesian-biomechanics/
+  repo-url: https://github.com/jobindjohn/bayesian-biomechanics
+  repo-branch: main
+  repo-actions: [edit, issue, source]
+  search: true
+  page-footer:
+    center: |
+      Text and figures licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/);
+      code under the [MIT licence](https://github.com/jobindjohn/bayesian-biomechanics/blob/main/LICENSE).
+  chapters:
+    - index.qmd
+    - part: "Foundations"
+      chapters:
+        - 01-grid-approximation/index.qmd
+        - 02-first-regression/index.qmd
+    - references.qmd
+  appendices:
+    - appendix-setup/index.qmd
+
+bibliography: references.bib
+csl: apa.csl
+lang: en-GB
+
+execute:
+  freeze: auto
+
+format:
+  html:
+    toc: true
+    number-sections: true
+    code-copy: true
+    code-overflow: wrap

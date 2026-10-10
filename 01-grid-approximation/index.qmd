@@ -1,0 +1,6 @@
+# Grid approximation {#sec-grid}
+
+::: {.callout-note}
+Placeholder chapter. It exists to prove the in-browser (WebAssembly) lesson
+pipeline and will be replaced with real content.
+:::
