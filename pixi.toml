@@ -48,7 +48,8 @@ format = "ruff format ."
 format-check = "ruff format --check ."
 marimo-check = "marimo check --strict --ignore-scripts ."
 spell = "typos"
-check = { depends-on = ["lint", "format-check", "marimo-check", "spell"] }
+sizes = "python scripts/check_sizes.py"
+check = { depends-on = ["lint", "format-check", "marimo-check", "spell", "sizes"] }
 install-hooks = "python scripts/install_hooks.py"
 # Run each notebook standalone from its own header (uv / pixi --script)
 check-notebooks = "python scripts/check_notebooks.py"
