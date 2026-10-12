@@ -1,0 +1,7 @@
+title: Lesson
+author: Jobin John
+version: 0.1.0
+quarto-required: ">=1.9.0"
+contributes:
+  shortcodes:
+    - lesson.lua

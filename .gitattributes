@@ -1,0 +1,7 @@
+* text=auto
+# pixi lockfile: generated, don't try to merge
+pixi.lock merge=binary linguist-language=YAML linguist-generated=true
+# precomputed results and data
+*.nc binary
+*.zarr binary
+*.parquet binary

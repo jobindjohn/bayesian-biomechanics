@@ -1,0 +1,54 @@
+# Running the lessons locally {#sec-setup}
+
+Lessons that run in the browser need no setup. For lessons that fit models
+with PyMC and Bambi, you need Python on your own computer. There are two ways
+to get it.
+
+## Option 1: the whole book with pixi (recommended)
+
+[pixi](https://pixi.prefix.dev) installs Python and every package the book
+uses into a folder inside the project, without touching the rest of your
+system.
+
+1. Install pixi by following the
+   [installation instructions](https://pixi.prefix.dev/latest/installation/)
+   for your operating system.
+2. Download the book's code, either with git:
+
+   ```bash
+   git clone https://github.com/jobindjohn/bayesian-biomechanics.git
+   cd bayesian-biomechanics
+   ```
+
+   or by downloading and unzipping the
+   [ZIP archive](https://github.com/jobindjohn/bayesian-biomechanics/archive/refs/heads/main.zip).
+3. Open a lesson. The first run downloads and installs everything, which can
+   take a few minutes:
+
+   ```bash
+   pixi run lesson 02-first-regression/first_regression.py
+   ```
+
+The lesson opens in your web browser.
+
+### Re-fitting the models
+
+Lessons load pre-computed results when they exist, so they open quickly. To
+fit the models again from scratch and overwrite the saved results:
+
+```bash
+pixi run refit 02-first-regression/first_regression.py
+```
+
+## Option 2: a single notebook
+
+Every notebook lists the packages it needs at the top of the file, so you can
+run one on its own. Download it with the button on the lesson's page, install
+[uv](https://docs.astral.sh/uv/getting-started/installation/), and run:
+
+```bash
+uvx marimo edit --sandbox first_regression.py
+```
+
+uv reads the package list from the notebook and installs it into a private
+environment for that notebook.

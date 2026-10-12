@@ -1,0 +1,14 @@
+target-version = "py312"
+line-length = 88
+extend-exclude = ["_freeze", "_site", "_extensions"]
+
+[lint]
+extend-select = ["I"] # import sorting
+
+[format]
+docstring-code-format = true
+
+[lint.per-file-ignores]
+# marimo notebooks: a cell's last expression is its output, and marimo
+# always writes a trailing `return`
+"[0-9][0-9]-*/*.py" = ["B018", "PLR1711"]

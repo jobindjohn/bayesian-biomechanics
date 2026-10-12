@@ -1,0 +1,33 @@
+# Preface {.unnumbered}
+
+::: {.callout-note}
+This book is under construction. Chapters are placeholders while the
+publishing pipeline is being set up.
+:::
+
+*Bayesian Biomechanics* is an interactive introduction to Bayesian data
+analysis for biomechanics researchers. It assumes no prior experience with
+Bayesian statistics and only a little Python.
+
+## How the book works
+
+Each chapter combines prose with interactive [marimo](https://marimo.io)
+notebooks:
+
+- **In the browser.** Lessons that only need lightweight tools (NumPy, SciPy)
+  run directly in your browser through WebAssembly. Nothing to install.
+- **On your computer.** Lessons that fit models with
+  [PyMC](https://www.pymc.io) and [Bambi](https://bambinos.github.io/bambi/)
+  run locally. The book shows their pre-computed results, and
+  @sec-setup explains how to run them yourself.
+
+## Further reading
+
+Good general introductions to Bayesian data analysis include
+@mcelreath2020 and @gelman2013.
+
+## Licence
+
+Text and figures are licensed under
+[CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Code and
+notebooks are licensed under the MIT licence.
