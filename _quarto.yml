@@ -21,7 +21,7 @@ book:
     - index.qmd
     - part: "Foundations"
       chapters:
-        - 01-grid-approximation/index.qmd
+        - 01-bayesian-updating/index.qmd
         - 02-first-regression/index.qmd
     - references.qmd
   appendices:

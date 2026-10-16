@@ -4,10 +4,11 @@ For each notebook in a chapter folder, writes to `<site>/<chapter>/`:
 
 - `<stem>.py`: the notebook itself, for download
 - `<stem>/index.html`: the exported notebook, embedded in the chapter page
-  - target "wasm": interactive WebAssembly notebook (edit mode) as a single
-    small HTML file; marimo's frontend loads from jsDelivr, pinned to the
-    installed marimo version. The chapter's `data/` folder is copied
-    alongside so `mo.notebook_location()` finds it in the browser
+  - target "wasm": interactive WebAssembly notebook in run mode (cells run on
+    load, code shown read-only) as a single small HTML file; marimo's
+    frontend loads from jsDelivr, pinned to the installed marimo version.
+    No data is copied: in a single-file export `mo.notebook_location()` is a
+    `blob:` URL, so lessons read data from GitHub in the browser
   - target "local": static HTML with outputs, from running the notebook
     (which loads its committed results)
 """
@@ -29,10 +30,8 @@ def export(nb, site: Path) -> None:
 
     if nb.target == "wasm":
         cmd = ["export", "html-wasm", str(nb.path), "-o", str(out_dir / "index.html")]
-        cmd += ["--mode", "edit", "--single-file", "--no-sandbox", "--force"]
-        data = nb.path.parent / "data"
-        if data.is_dir():
-            shutil.copytree(data, out_dir / "data", dirs_exist_ok=True)
+        cmd += ["--mode", "run", "--show-code", "--single-file"]
+        cmd += ["--no-sandbox", "--force"]
     else:
         cmd = ["export", "html", str(nb.path), "-o", str(out_dir / "index.html")]
         cmd += ["--no-sandbox", "--force"]

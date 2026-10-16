@@ -7,6 +7,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 CHAPTER_GLOB = "[0-9][0-9]-*"
+DATA_DIR = ROOT / "data"  # shared datasets, one folder each
 TARGETS = {"wasm", "local"}
 
 # Reference regex from PEP 723
@@ -27,6 +28,11 @@ class Notebook:
     @property
     def target(self) -> str:
         return self.metadata.get("tool", {}).get("bb", {}).get("target", "")
+
+    @property
+    def data(self) -> list[str]:
+        """Shared datasets (folders in `data/`) listed under [tool.bb] data."""
+        return self.metadata.get("tool", {}).get("bb", {}).get("data", [])
 
     @property
     def needs_conda(self) -> bool:
@@ -57,6 +63,12 @@ def find_notebooks(root: Path = ROOT) -> list[Notebook]:
             raise ValueError(
                 f"{path}: set [tool.bb] target to one of {sorted(TARGETS)} "
                 "in the script header"
+            )
+        missing = [name for name in notebook.data if not (DATA_DIR / name).is_dir()]
+        if missing:
+            raise ValueError(
+                f"{path}: [tool.bb] data lists {missing}, but there is no such "
+                f"folder in {DATA_DIR.relative_to(root).as_posix()}/"
             )
         notebooks.append(notebook)
     return notebooks

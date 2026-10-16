@@ -30,10 +30,11 @@ analysis to biomechanics researchers, including readers new to Python.
 _quarto.yml            book config (chapters, appendices, post-render hook)
 _brand.yml             colours/fonts, light + dark (WCAG AA)
 index.qmd              preface
+data/<dataset>/        shared datasets used by several chapters (README.md each)
 NN-chapter-name/       one folder per chapter
   index.qmd            chapter text
   <lesson>.py          marimo notebook(s)
-  data/                small input data (README.md says where it came from)
+  data/                chapter-only input data (README.md says where it came from)
   results/             committed model results (.nc) for local lessons
 appendix-setup/        "Running the lessons locally" appendix
 references.bib, apa.csl
@@ -44,7 +45,7 @@ scripts/
   notebooks.py         finds lesson notebooks, parses PEP 723 headers
   export_notebooks.py  Quarto post-render: exports notebooks into _site/
   check_notebooks.py   runs each notebook standalone from its header
-  check_sizes.py       5 MB cap on chapter data/ and results/ files
+  check_sizes.py       5 MB cap on data/, chapter data/ and results/ files
   install_hooks.py     installs the git pre-commit hook
 .github/workflows/     check.yml (PRs, weekly), publish.yml (push to main)
 ```
@@ -86,7 +87,9 @@ ruff, typos, lychee and uv, `docs` = dev plus Quarto.
   (`inference_method="nutpie"`). It avoids needing a C compiler; the
   "g++ not available" warning is expected and harmless.
 - **Libraries:** ArviZ 1.x with the matplotlib backend for plots, plotnine
-  for any other plots, **polars** for data frames. Bambi needs pandas, so
+  for any other plots, **polars** for data frames. Plain matplotlib is fine
+  for simple hand-built figures (e.g. a prior and posterior density with a
+  rug of data); use the `_brand.yml` colours. Bambi needs pandas, so
   convert with `.to_pandas()` at that point only.
 - **Prose:** British English (checked by typos) and APA 7 citations from
   `references.bib`.
@@ -96,6 +99,9 @@ ruff, typos, lychee and uv, `docs` = dev plus Quarto.
   5 MB each in git; larger ones go on Zenodo, downloaded with a checksum.
   Every `data/` folder has a README.md stating where the data came from and
   its licence. Lab data needs ethics/consent clearance before it is released.
+  A dataset used by more than one chapter lives in `data/<dataset>/` at the
+  repo root (named after its source, e.g. `data/Wood-1969/`); data for one
+  chapter only lives in that chapter's `data/`. Revisit as the book grows.
 - **Results:** models are fitted locally and results committed; CI never
   refits.
 - **Brand:** a project-specific `_brand.yml` (teal/orange, Source Sans 3,
@@ -121,6 +127,7 @@ to both.
 #
 # [tool.bb]
 # target = "wasm"                           # or "local"
+# data = ["Wood-1969"]                      # optional: shared datasets used
 # ///
 ```
 
@@ -130,6 +137,8 @@ to both.
   `pixi run --script` instead of uv.
 - `[tool.bb] target` is required; `scripts/notebooks.py` raises an error
   without it.
+- `[tool.bb] data` lists the shared datasets (folders in `data/`) the
+  notebook reads; `scripts/notebooks.py` raises an error if one is missing.
 
 ### `target = "wasm"` (runs in the browser)
 
@@ -137,12 +146,25 @@ to both.
   PyTensor or Bambi.** Check that a package exists in Pyodide (marimo 0.25
   uses Pyodide v314.0.0, with Python 3.14) before using it.
 - Pyodide's polars is **1.33**, so WASM headers use `polars>=1.33`, not 2.x.
-- Read data with `mo.notebook_location() / "data" / "file.csv"`. The export
-  copies the chapter's `data/` folder next to the exported page, so the same
-  code works locally and in the browser.
-- These are exported in **edit** mode as a single HTML file
-  (`--single-file`). marimo's frontend loads from jsDelivr, pinned to the
-  installed marimo version; Pyodide comes from the same CDN.
+- **Data:** put it in `data/<dataset>/` as CSV and read it with the
+  `read_data(dataset, file)` helper from
+  `01-bayesian-updating/bayesian_updating.py`. It reads the file from disk
+  when the notebook sits in the repo, and otherwise fetches it from
+  `raw.githubusercontent.com/.../main/data/`. Why:
+  - In a single-file export `mo.notebook_location()` is a `blob:` URL, so
+    relative paths cannot work in the browser.
+  - Pyodide's polars cannot fetch URLs, and marimo's fallback needs pyarrow
+    (not loaded), so the helper fetches the text with `pyodide.http.open_url`
+    and passes the bytes to `pl.read_csv`. Parquet would need binary fetches,
+    hence CSV.
+  - Consequence: new or changed data reaches the browser lesson only after it
+    is merged to `main`. Downloaded and molab copies get the data too.
+- These are exported in **run** mode with code shown (`--mode run
+  --show-code --single-file`): cells run on load and sliders work, but the
+  code is read-only (edit-mode exports never run until the reader presses
+  run). Readers edit via "Open in molab" or "Download notebook". marimo's
+  frontend loads from jsDelivr, pinned to the installed marimo version;
+  Pyodide comes from the same CDN.
 
 ### `target = "local"` (PyMC/Bambi)
 

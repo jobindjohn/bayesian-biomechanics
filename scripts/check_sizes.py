@@ -1,12 +1,14 @@
 """Fail if a committed data or results file exceeds the size cap.
 
+Covers chapter `data/` and `results/` folders and the shared `data/` folder.
+
 Larger datasets belong on Zenodo and are downloaded on first use.
 """
 
 import subprocess
 import sys
 
-from notebooks import CHAPTER_GLOB, ROOT
+from notebooks import CHAPTER_GLOB, DATA_DIR, ROOT
 
 MAX_BYTES = 5 * 1024 * 1024
 
@@ -23,7 +25,8 @@ def main() -> int:
     for name in files:
         path = ROOT / name
         in_chapter = path.parent.parent.match(CHAPTER_GLOB)
-        if in_chapter and path.parent.name in {"data", "results"} and path.exists():
+        chapter_file = in_chapter and path.parent.name in {"data", "results"}
+        if (chapter_file or path.is_relative_to(DATA_DIR)) and path.exists():
             size = path.stat().st_size
             if size > MAX_BYTES:
                 too_big.append(f"{name} ({size / 1024**2:.1f} MB)")

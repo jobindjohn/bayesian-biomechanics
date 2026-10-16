@@ -1,0 +1,30 @@
+donor_id,sex,age_yr,cause_of_death,parts,n_tests,n_complete
+UM27,F,43,Cancer,TR,2,2
+UM29,F,25,Pneumonia,FR,4,2
+UM32,M,52,Lung cancer,FL,1,1
+UM33,F,64,Renal Failure,FL;FR,2,2
+UM36,M,56,Burns,PR,2,2
+VA17,M,47,Lung cancer,PR,4,3
+VA18,M,95,Lung cancer,PR,5,3
+VA19,M,74,Pulmonary Emboli,PL,3,1
+VA21,M,48,Cancer of Bladder,PL,3,3
+VA22,M,75,Obstructive Jaundice,PL,4,4
+VA23,M,44,Carcinoma of Lung,PL,6,6
+VA24,M,50,Smooth Muscle Malignant Tumor,PL,3,3
+VA25,M,25,Pulmonary Hemorrhage and Renal Failure,PR,3,2
+VA27,M,92,Heart Failure,PL,3,1
+VA28,M,72,Pulmonary Emphysema,PR,3,3
+VA29,M,57,Cancer,PL,5,5
+VA30,M,57,Cancer,PR,4,4
+VA34,M,70,Throat Cancer,PL,4,4
+VA37,M,74,Vascular Disease,PR,5,5
+VA39,M,47,Multiple Myeloma,PR,5,5
+VA41,M,49,Emphysema,PL,5,5
+VA45,M,36,Kidney Failure,PR,4,4
+VA49,M,71,Malignant Melanoma,PL,7,7
+VA57,M,53,Brain Cancer,FR,7,7
+VA58,M,81,Mesenteric Thrombosis,FR,5,0
+VA63,M,73,Heart Attack,TL,7,7
+VA65,M,45,Heart Attack,FL,9,4
+VA66,M,74,Cancer,PL,16,14
+VA74,M,40,Cancer,FL,11,11

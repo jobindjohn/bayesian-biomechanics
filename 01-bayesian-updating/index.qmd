@@ -1,0 +1,12 @@
+# Updating beliefs: the stiffness of skull bone {#sec-updating}
+
+::: {.callout-note}
+Draft chapter, in progress.
+:::
+
+How stiff is the cortical bone of the human skull? In this chapter we answer
+that question the Bayesian way: we write down what we believe before seeing
+any data, then update that belief one tensile test at a time, using the
+measurements of @wood1969.
+
+{{< lesson bayesian_updating.py >}}
